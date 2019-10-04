@@ -3,6 +3,7 @@
 // TODO: add mouse click to initialise cells
 // add reset button
 // TODO: redraw grid when size of window changes
+// TODO: mobile responsive
 
 document.addEventListener('DOMContentLoaded', () => {
     var screen_proportion = 0.95;
