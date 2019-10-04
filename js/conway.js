@@ -1,7 +1,6 @@
 // TODO: add generation counter
 // TODO: center grid
 // TODO: add slider for speed
-// TODO: add pause/run
 // TODO: add mouse click to initialise cells
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -130,14 +129,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var delayInMilliseconds = 500; //1 second
 
-    setInterval(function() {
-        // check if anything is alive
-        // if not, clear the interval
-        // progress to the next generation
+
+    setInterval(function () {
         if (running) {
             griddata = nextGeneration(griddata, d3.select("#grid"));
         }
     }, delayInMilliseconds);
+
 
     document.querySelector('button').onclick = function() {
         if (running) {

@@ -10,9 +10,14 @@
 </head>
 <body>
     <div id="grid_container">
-        <div id="grid"></div>
-        <div id="control">
-            <button>Pause</button>
+        <div id="grid" class="row"></div>
+        <div id="control" class="row">
+            <form class="form-inline">
+                <div class="col-3 my-2">
+                    <button type="button" class="btn btn-dark mx-4">Pause</button>
+                </div>
+                <div class="col-4"><input type="number" class="form-control mx-4" id="inpDelay" placeholder="Enter delay (ms)"></div>
+            </form>
         </div>
     </div>
 
