@@ -1,0 +1,28 @@
+
+html {
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+    height: 100%;
+}
+
+#grid_container {
+    display: flex;
+    align-items: unsafe center;
+    justify-content: center;
+    height: 100%
+}
+
+#grid {
+    /*align-self: center;*/
+    /*margin: 0 auto;*/
+    align-self: center;
+    height: 90vh;
+    width: 90vw;
+    /*max-width: 80%;
+    max-height: 80%;*/
+    /*width: 50%;
+    height: 50%;*/
+}

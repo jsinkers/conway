@@ -1,7 +1,16 @@
+// TODO: add generation counter
+// TODO: center grid
+// TODO: add slider for speed
+// TODO: add pause/run
+// TODO: add mouse click to initialise cells
+
 document.addEventListener('DOMContentLoaded', () => {
-    var screen_proportion = 0.9;
+    var screen_proportion = 0.95;
     var dead_style = "#fff";
     var live_style = "#2C2AF1";
+    var running = true;
+    const divWidth = +d3.select('#grid').style('width').slice(0, -2);
+    const divHeight = +d3.select('#grid').style('height').slice(0, -2);
 
     function seedCell() {
         if (Math.random() < 0.5) {
@@ -50,8 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
         var neighbours = 0;
         for (var row = cell_row - 1; row <= cell_row + 1; row++) {
             for (var col = cell_col - 1; col <= cell_col + 1; col++) {
-                if (row > 0 && row < griddata.length &&
-                    col > 0 && col < griddata[0].length &&
+                if (row >= 0 && row < griddata.length &&
+                    col >= 0 && col < griddata[0].length &&
                     !(row === cell_row && col === cell_col)) {
                     if (griddata[row][col].state === live_style) {
                         neighbours++;
@@ -67,9 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
         var xpos = 1; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
         var ypos = 1;
         const numCols = 100;
-        const width = screen_proportion * window.innerWidth / numCols;
+
+        //const width = screen_proportion * window.innerWidth / numCols;
+        const width = screen_proportion * divWidth / numCols;
         const height = width;
-        const numRows = Math.floor(screen_proportion * window.innerHeight / height);
+        //const numRows = Math.floor(screen_proportion * window.innerHeight / height);
+        const numRows = Math.floor(screen_proportion * divHeight / height);
         var click = 0;
 
         for (var row = 0; row < numRows; row++) {
@@ -96,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var grid = d3.select("#grid")
         .append("svg")
-        .attr("width", window.innerWidth)
-        .attr("height", window.innerHeight);
+        .attr("width", divWidth)
+        .attr("height", divHeight);
 
     var row = grid.selectAll(".row")
         .data(griddata)
@@ -121,10 +133,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(function() {
         // check if anything is alive
         // if not, clear the interval
-        griddata = nextGeneration(griddata, d3.select("#grid"));
         // progress to the next generation
+        if (running) {
+            griddata = nextGeneration(griddata, d3.select("#grid"));
+        } else {
 
+        }
     }, delayInMilliseconds);
+
+    //document.addEventListener('resize', updateSize);
 
 });
 
