@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const divWidth = +d3.select('#grid').style('width').slice(0, -2);
     const divHeight = +d3.select('#grid').style('height').slice(0, -2);
     var delayInMilliseconds = 500;
+    var intervalID = null;
+    const minDelay = 100;
+    const maxDelay = 5000;
 
     function seedCell() {
         if (Math.random() < 0.5) {
@@ -105,9 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     var griddata = gridData();
 
-    // I like to log the data to the console for quick debugging
-    console.log(griddata);
-
     var grid = d3.select("#grid")
         .append("svg")
         .attr("width", divWidth)
@@ -130,13 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .style("fill", function(d) { return d.state; })
         .style("stroke", "#222");
 
-
-    setInterval(function () {
-        if (running) {
-            griddata = nextGeneration(griddata, d3.select("#grid"));
-        }
-    }, delayInMilliseconds);
-
+    intervalManager(true);
 
     document.querySelector('button').onclick = function() {
         if (running) {
@@ -145,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.innerText = "Pause";
         }
         running = !running;
+        intervalManager(running);
     };
 
     document.getElementById("form").onsubmit = function(ev) {
@@ -153,15 +148,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = document.getElementById("inpDelay");
             const x = el.value;
             // validate input
-            if (isNaN(x) || x < 10 || x > 5000) {
-                alert("Input error: delay must be a number between 10ms and 5000ms");
-                el.value = "";
+            if (isNaN(x) || x < minDelay || x > maxDelay) {
+                alert(`Input error: delay must be a number between ${minDelay}ms and ${maxDelay}ms`);
             } else {
                 // if valid set a new value for delay
                 delayInMilliseconds = x;
+                // restart interval with new delay value
+                if (running) {
+                    intervalManager(false);
+                    intervalManager(true);
+                }
             }
+            el.value = "";
         //}
     };
+
+    function intervalManager(flag) {
+        if (flag) {
+            intervalID = setInterval(function () {
+                griddata = nextGeneration(griddata, d3.select("#grid"));
+            }, delayInMilliseconds);
+        } else {
+            clearInterval(intervalID);
+        }
+    }
 
 });
 
