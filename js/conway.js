@@ -136,12 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // progress to the next generation
         if (running) {
             griddata = nextGeneration(griddata, d3.select("#grid"));
-        } else {
-
         }
     }, delayInMilliseconds);
 
-    //document.addEventListener('resize', updateSize);
+    document.querySelector('button').onclick = function() {
+        if (running) {
+            this.innerText = "Start";
+        } else {
+            this.innerText = "Pause";
+        }
+        running = !running;
+    };
 
 });
 
