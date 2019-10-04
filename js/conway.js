@@ -1,7 +1,8 @@
 // TODO: add generation counter
 // TODO: center grid
-// TODO: add slider for speed
 // TODO: add mouse click to initialise cells
+// add reset button
+// TODO: redraw grid when size of window changes
 
 document.addEventListener('DOMContentLoaded', () => {
     var screen_proportion = 0.95;
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     intervalManager(true);
 
-    document.querySelector('button').onclick = function() {
+    document.getElementById("btnPause").onclick = function() {
         if (running) {
             this.innerText = "Start";
         } else {
@@ -171,6 +172,33 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             clearInterval(intervalID);
         }
+    }
+
+    document.getElementById("btnReset").onclick = function() {
+        //intervalManager(false);
+        griddata = seedGrid();
+        //setTimeout(function () {}, 1000);
+        //intervalManager(true);
+    }
+
+    function seedGrid() {
+        var data = new Array();
+        for (var row = 0; row < griddata.length; row++) {
+            data.push( new Array() );
+            for (var col = 0; col < griddata[0].length; col++) {
+                data[row].push({state: seedCell()});
+            }
+        }
+
+        var rows = grid.selectAll(".row")
+            .data(data);
+
+        var column = rows.selectAll(".square")
+            .data(function(d) { return d; })
+            .attr("state", function(d) { return d.state; })
+            .style("fill", function(d) { return d.state; });
+
+        return data;
     }
 
 });
