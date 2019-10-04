@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var running = true;
     const divWidth = +d3.select('#grid').style('width').slice(0, -2);
     const divHeight = +d3.select('#grid').style('height').slice(0, -2);
+    var delayInMilliseconds = 500;
 
     function seedCell() {
         if (Math.random() < 0.5) {
@@ -71,18 +72,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function gridData() {
+
+        //const numRows = Math.floor(screen_proportion * window.innerHeight / height);
+        //const width = screen_proportion * window.innerWidth / numCols;
         var data = new Array();
         var xpos = 1; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
         var ypos = 1;
-        const numCols = 100;
 
-        //const width = screen_proportion * window.innerWidth / numCols;
+        const numCols = 100;
         const width = screen_proportion * divWidth / numCols;
         const height = width;
-        //const numRows = Math.floor(screen_proportion * window.innerHeight / height);
         const numRows = Math.floor(screen_proportion * divHeight / height);
-        var click = 0;
 
+        var click = 0;
         for (var row = 0; row < numRows; row++) {
             data.push( new Array() );
             for (var column = 0; column < numCols; column++) {
@@ -99,9 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ypos += height;
         }
         return data;
-    }
 
+    }
     var griddata = gridData();
+
     // I like to log the data to the console for quick debugging
     console.log(griddata);
 
@@ -127,8 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .style("fill", function(d) { return d.state; })
         .style("stroke", "#222");
 
-    var delayInMilliseconds = 500; //1 second
-
 
     setInterval(function () {
         if (running) {
@@ -144,6 +145,22 @@ document.addEventListener('DOMContentLoaded', () => {
             this.innerText = "Pause";
         }
         running = !running;
+    };
+
+    document.getElementById("form").onsubmit = function(ev) {
+        ev.preventDefault();
+        //if (ev.key === "Enter") {
+            const el = document.getElementById("inpDelay");
+            const x = el.value;
+            // validate input
+            if (isNaN(x) || x < 10 || x > 5000) {
+                alert("Input error: delay must be a number between 10ms and 5000ms");
+                el.value = "";
+            } else {
+                // if valid set a new value for delay
+                delayInMilliseconds = x;
+            }
+        //}
     };
 
 });
