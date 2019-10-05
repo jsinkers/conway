@@ -28,7 +28,8 @@ body {
 #grid {
     @extend .row;
     @extend .flex-column;
-    @extend .flex-grow-1;
+    @extend .flex-shrink-1;
+    @extend .flex-md-grow-1;
     /*@extend .h-75;*/
     @extend .d-flex;
     @extend .justify-content-center;

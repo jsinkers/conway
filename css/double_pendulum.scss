@@ -1,0 +1,16 @@
+@import "../node_modules/bootstrap-scss/bootstrap";
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+#doublePendulum {
+    @extend .w-75;
+}
