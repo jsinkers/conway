@@ -18,7 +18,7 @@ const m2 = 0.2;
 const M = m1 + m2;
 const l1 = 0.3;
 const l2 = 0.3;
-var h = 0.01;
+var h = 0.001;
 
 // initial conditions
 var vector = {theta1: 0, theta2: 0, alpha1: 10, alpha2: 10    };
