@@ -182,8 +182,14 @@ function updatePendulum(vector, centreX, centreY) {
                            .attr('cx', dwgX2)
                            .attr('cy', dwgY2)
                            .attr('r', 1)
-                           .style('fill', "red");
-          points.push(point);
+                           .style('fill', "red")
+                            .moveToBack();
+
+    points.push(point);
+    while (points.length > 1000) {
+        points[0].remove();
+        points.shift();
+    }
 
 
 
@@ -194,3 +200,12 @@ document.addEventListener('DOMContentLoaded', () =>  {
     svg =  d3.select(dwgDiv).append("svg");
     drawPendulum();
 });
+
+d3.selection.prototype.moveToBack = function() {
+    return this.each(function() {
+        var firstChild = this.parentNode.firstChild;
+        if (firstChild) {
+            this.parentNode.insertBefore(this, firstChild);
+        }
+    });
+};
