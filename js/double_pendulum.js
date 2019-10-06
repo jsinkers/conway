@@ -11,6 +11,7 @@
 // l1, l2: lengths of 1st, 2nd pendulum [m]
 // g: acceleration due to gravity [m/s^2]
 // h: step size [s]
+
 const g = 9.81;
 const m1 = 0.2;
 const m2 = 0.2;
@@ -21,7 +22,8 @@ var h = 0.01;
 
 // initial conditions
 var vector = {theta1: 0, theta2: 0, alpha1: 0, alpha2: 0};
-
+var dwgDiv = null;
+var svg =  null;
 
 function calculateAngAcceleration(vector) {
     // calculate the angular acceleration for the given iteration
@@ -51,16 +53,80 @@ function calculateNextIteration(lastVector) {
 function drawPendulum() {
     // draw pendulum for given masses, lengths
     // get dims of div
+    const divWidth = dwgDiv.clientWidth;
+    const divHeight = dwgDiv.clientHeight;
+
+    const dwgSize = Math.min(divHeight, divWidth);
+
+    svg
+        .attr("width", divWidth)
+        .attr("height", divHeight);
+        //.attr("border", 1);
+        //style("border", "1px solid black");
 
     // find centre
+    const centreX = divWidth/2;
+    const centreY = divHeight/2;
 
-    // draw line 0-1
+    // proportion of svg to use
+    const svgProp = 0.8;
+    const lengthScale = svgProp / (l1 + l2) * dwgSize/2;
+    const y1 = centreY + lengthScale*l1;
+    const y2 = y1 + lengthScale*l2;
+    var jsonCircles = [
+                         { "x_axis": centreX, "y_axis": centreY, "radius": 5, "color" : "black", "pendulum": 0 },
+                         { "x_axis": centreX, "y_axis": y1, "radius": 20, "color" : "purple", "pendulum": 1},
+                         { "x_axis": centreX, "y_axis": y2, "radius": 20, "color" : "red", "pendulum": 2}];
+    var jsonLines = [{"x1": centreX, "y1": centreY, "x2": centreX, "y2": y1, "pendulum": 1},
+                     {"x1": centreX, "y1": y1, "x2": centreX, "y2": y2, "pendulum": 2}];
 
-    // draw line 1-2
+    // draw lines
+    var lines = svg.selectAll("line")
+        .data(jsonLines)
+        .enter()
+        .append("line");
 
-    // draw mass 1
+    var lineAttributes = lines
+                        .attr("x1", function (d) {return d.x1})
+                        .attr("y1", function (d) {return d.y1})
+                        .attr("x2", function (d) {return d.x2})
+                        .attr("y2", function (d) {return d.y2})
+                        .attr("pendulum", function (d) {return d.pendulum})
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "black");
 
-    // draw mass 2
+    // draw masses
+    var circles = svg.selectAll("circle")
+        .data(jsonCircles)
+        .enter()
+        .append("circle");
+
+    var circleAttributes = circles
+                       .attr("cx", function (d) { return d.x_axis; })
+                       .attr("cy", function (d) { return d.y_axis; })
+                       .attr("r", function (d) { return d.radius; })
+                       .attr("pendulum", function (d) {return d.pendulum})
+                       .style("fill", function(d) { return d.color; });
+
+    var pendulum1 = d3.selectAll("[pendulum='1']");
+    var pendulum2 = d3.selectAll("[pendulum='2'");
+
+    var interpol1 = d3.interpolateString(`rotate(0, ${centreX}, ${centreY})`, `rotate(30, ${centreX}, ${centreY})`);
+    var interpol2 = d3.interpolateString(`rotate(0, ${centreX}, ${y1})`, `rotate(30, ${centreX}, ${y1})`)
+
+    // rotate lines
+    var rotation1 = pendulum1
+        .transition()
+            .duration(2000)
+            //.attr("transform", `rotate(30, ${centreX}, ${y1})`);
+        .attrTween("transform", function (d,i,a) {return interpol1});
+
+    var rotation2 = pendulum2
+        .transition()
+            .duration(2000)
+            //.attr("transform", `rotate(30, ${centreX}, ${y1})`);
+        .attrTween("transform", function (d,i,a) {return interpol2});
+
 
 }
 
@@ -74,6 +140,10 @@ function updatePendulum(vector) {
 }
 
 document.addEventListener('DOMContentLoaded', () =>  {
+    dwgDiv = document.getElementById("drawing");
+    svg =  d3.select(dwgDiv).append("svg");
+    drawPendulum();
+
 
 
 });
