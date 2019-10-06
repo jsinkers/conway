@@ -18,7 +18,7 @@ const l2 = 0.2 + Math.random();
 const h = 0.001;
 
 // initial conditions
-var vector = {theta1: 0, theta2: 0, alpha1: 10, alpha2: 10    };
+var vector = { theta1: 0, theta2: 0, alpha1: 5 + 10*Math.random(), alpha2: 5 + 10*Math.random() };
 var dwgDiv = null;
 var svg =  null;
 
@@ -108,6 +108,13 @@ function drawPendulum() {
                        .attr("pendulum", function (d) {return d.pendulum})
                        .style("fill", function(d) { return d.color; });
 
+    const point = svg.append('circle')
+                           .attr('cx', centreX)
+                           .attr('cy', y2)
+                           .attr('r', 1)
+                           .style('fill', "red");
+          points.push(point);
+
     var pendulum1 = d3.selectAll("[pendulum='1']");
     var pendulum2 = d3.selectAll("[pendulum='2']");
 
@@ -170,8 +177,15 @@ function updatePendulum(vector, centreX, centreY) {
                        .attr("cx", function (d) { return d.x_axis; })
                        .attr("cy", function (d) { return d.y_axis; });
 
-    //points.append()
     // draw trace
+    const point = svg.append('circle')
+                           .attr('cx', dwgX2)
+                           .attr('cy', dwgY2)
+                           .attr('r', 1)
+                           .style('fill', "red");
+          points.push(point);
+
+
 
 }
 
