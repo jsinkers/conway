@@ -21,9 +21,11 @@ const l2 = 0.3;
 var h = 0.01;
 
 // initial conditions
-var vector = {theta1: 0, theta2: 0, alpha1: 0, alpha2: 0};
+var vector = {theta1: 0, theta2: 0, alpha1: 10, alpha2: 10    };
 var dwgDiv = null;
 var svg =  null;
+
+var lengthScale = null;
 
 function calculateAngAcceleration(vector) {
     // calculate the angular acceleration for the given iteration
@@ -70,7 +72,7 @@ function drawPendulum() {
 
     // proportion of svg to use
     const svgProp = 0.8;
-    const lengthScale = svgProp / (l1 + l2) * dwgSize/2;
+    lengthScale = svgProp / (l1 + l2) * dwgSize/2;
     const y1 = centreY + lengthScale*l1;
     const y2 = y1 + lengthScale*l2;
     var jsonCircles = [
@@ -109,10 +111,10 @@ function drawPendulum() {
                        .style("fill", function(d) { return d.color; });
 
     var pendulum1 = d3.selectAll("[pendulum='1']");
-    var pendulum2 = d3.selectAll("[pendulum='2'");
+    var pendulum2 = d3.selectAll("[pendulum='2']");
 
-    var interpol1 = d3.interpolateString(`rotate(0, ${centreX}, ${centreY})`, `rotate(30, ${centreX}, ${centreY})`);
-    var interpol2 = d3.interpolateString(`rotate(0, ${centreX}, ${y1})`, `rotate(30, ${centreX}, ${y1})`)
+    /*var interpol1 = d3.interpolateString(`rotate(0, ${centreX}, ${centreY})`, `rotate(30, ${centreX}, ${centreY})`);
+    var interpol2 = d3.interpolateString(`rotate(0, ${centreX}, ${y1})`, `rotate(30, ${centreX}, ${y1})`);
 
     // rotate lines
     var rotation1 = pendulum1
@@ -125,25 +127,56 @@ function drawPendulum() {
         .transition()
             .duration(2000)
             //.attr("transform", `rotate(30, ${centreX}, ${y1})`);
-        .attrTween("transform", function (d,i,a) {return interpol2});
+        .attrTween("transform", function (d,i,a) {return interpol2});*/
+    vector = calculateAngAcceleration(vector);
 
+    setInterval(function() {
+        vector = calculateNextIteration(vector);
+        updatePendulum(vector, centreX, centreY);
+    }, 0.1);
 
 }
 
-function updatePendulum(vector) {
+function updatePendulum(vector, centreX, centreY) {
     // based on new values, update drawing
     // compute x1, y1 from l1, theta1
-
+    const x1 = l1 * Math.sin(vector.theta1);
+    const y1 = -l1 * Math.cos(vector.theta1);
     // compute x2, y2 from x1, y1, l2, theta2
+    const x2 = x1 + l2 * Math.sin(vector.theta2);
+    const y2 = y1 - l2 * Math.cos(vector.theta2);
 
     // update positions
+    const dwgX1 = centreX + x1 * lengthScale;
+    const dwgY1 = centreY - y1 * lengthScale;
+    const dwgX2 = centreX + x2 * lengthScale;
+    const dwgY2 = centreY - y2 * lengthScale;
+    jsonCircles = [{ "x_axis": centreX, "y_axis": centreY },
+                   { "x_axis": dwgX1, "y_axis": dwgY1 },
+                   { "x_axis": dwgX2, "y_axis": dwgY2 }];
+
+    jsonLines = [{ "x1": centreX, "y1": centreY, "x2": dwgX1, "y2": dwgY1 },
+                 { "x1": dwgX1, "y1": dwgY1, "x2": dwgX2, "y2": dwgY2 }];
+
+    // update lines
+    var lines = svg.selectAll("line").data(jsonLines);
+    var lineAttributes = lines//.transition()
+                        //.delay(2000)
+                        .attr("x1", function (d) {return d.x1})
+                        .attr("y1", function (d) {return d.y1})
+                        .attr("x2", function (d) {return d.x2})
+                        .attr("y2", function (d) {return d.y2});
+
+    // update masses
+    var circles = svg.selectAll("circle").data(jsonCircles);
+    var circleAttributes = circles//.transition()
+                        //.delay(2000)
+                       .attr("cx", function (d) { return d.x_axis; })
+                       .attr("cy", function (d) { return d.y_axis; });
 }
 
 document.addEventListener('DOMContentLoaded', () =>  {
     dwgDiv = document.getElementById("drawing");
     svg =  d3.select(dwgDiv).append("svg");
     drawPendulum();
-
-
-
 });
