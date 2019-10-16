@@ -1,0 +1,22 @@
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+canvas {
+    width: 90vw;
+    height: 90vh;
+    border:1px solid #000000;
+}
+
+div {
+    margin: auto;
+    text-align: center;
+}

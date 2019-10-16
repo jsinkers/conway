@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         griddata = seedGrid();
         //setTimeout(function () {}, 1000);
         //intervalManager(true);
-    }
+    };
 
     function seedGrid() {
         var data = new Array();
