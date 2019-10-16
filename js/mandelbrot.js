@@ -41,8 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         height = ratio * viewportHeight;
         width = height * dx/dy;
     }
-    width = 50;
-    height = 50;
 
     var xScale = d3.scaleLinear()
         .domain([0.0, width])
