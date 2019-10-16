@@ -69,28 +69,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var maxIterations = 1000;
 
-    var colorScale = d3.scaleLinear()
-        .domain([0, maxIterations])
+    var colorScale = d3.scaleLog()
+        .domain([1, maxIterations])
         .range([0, 1]);
 
     var escapeIteration = null;
-
+    var color = null;
     for (var y = 0; y < canvasHeight; ++y) {
+        console.log(`Computing ${y} of ${canvasHeight}`);
         for (var x = 0; x < canvasWidth; ++x) {
             escapeIteration = compute_escape_time_mandelbrot(xScale(x), yScale(y), maxIterations);
             //escapeIteration = escapeTester(xScale(x), yScale(y), maxIterations);
-            //var color = interpolateLinearly(colorScale(escapeIteration), hot);
-            if (escapeIteration >= maxIterations) {
-                color = [0, 0, 0];
-                console.log(`${x}, ${y}: ${escapeIteration}`);
-            } else {
-                color = [255, 255, 255];
-            }
+            var color = interpolateLinearly(colorScale(escapeIteration), Blues);
+            //if (escapeIteration >= maxIterations) {
+            //    color = [0, 0, 0];
+            //    console.log(`${x}, ${y}: ${escapeIteration}`);
+            //} //else {
+            //    color = [255, 255, 255];
+            //}
             //console.log(color);
             data[y * canvasWidth + x] =
-                (color[0]) |     // red
-                (color[1] << 8) |    // green
-                (color[2] << 16) |    // blue
+                (Math.round(255*color[0])) |     // red
+                (Math.round(255*color[1] << 8)) |    // green
+                (Math.round(color[2] << 16)) |    // blue
                 (255 << 24);        // alpha
         }
     }
