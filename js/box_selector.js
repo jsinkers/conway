@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var width = 0;
     var height = 0;
     var ratio = 0.8;
+
     if (viewportHeight >= viewportWidth) {
         width = Math.round(ratio * viewportWidth);
         height = Math.round(width * dy / dx);
@@ -37,18 +38,26 @@ document.addEventListener('DOMContentLoaded', () => {
     var customBase = document.createElement('custom');
     var custom = d3.select(customBase); // This is your SVG replacement and the parent of all other elements
 
+    var svg = d3.select('#container')
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
     var x = 0;
     var y = 0;
 
     canvas.addEventListener('click', function(event) {
         // x, y coordinates relative to canvas
-        var x = event.pageX - canvas.offsetLeft;
-        var y = event.pageY - canvas.offsetTop;
+        x = event.pageX - canvas.offsetLeft;
+        y = event.pageY - canvas.offsetTop;
 
         drawing = true;
-        ctx.strokeRect(x, y, 50, 50);
+        ctx.strokeRect(x, y, 0, 0);
     });
 
+    canvas.addEventListener('onmousemove', function(event) {
+
+    });
 
 });
 
