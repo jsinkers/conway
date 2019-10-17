@@ -34,35 +34,81 @@ document.addEventListener('DOMContentLoaded', () => {
     var ctx = canvas.getContext('2d');
     //var imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 
-    var drawing = false;
-    var customBase = document.createElement('custom');
-    var custom = d3.select(customBase); // This is your SVG replacement and the parent of all other elements
+    //var drawing = false;
+    //var customBase = document.createElement('custom');
+    //var custom = d3.select(customBase); // This is your SVG replacement and the parent of all other elements
 
-    var svg = d3.select('#container')
+    /*var svg = d3.select('#container')
         .append("svg")
         .attr("width", width)
-        .attr("height", height);
-
+        .attr("height", height);*/
     var x = 0;
     var y = 0;
 
-    canvas.addEventListener('click', function(event) {
+    initDraw(document.getElementById('container'));
+
+    /*canvas.addEventListener('click', function(event) {
         // x, y coordinates relative to canvas
         x = event.pageX - canvas.offsetLeft;
         y = event.pageY - canvas.offsetTop;
 
         drawing = true;
-        ctx.strokeRect(x, y, 0, 0);
-    });
-
-    canvas.addEventListener('onmousemove', function(event) {
-
-    });
+        //ctx.strokeRect(x, y, 0, 0);
+    });*/
 
 });
 
+function initDraw(canvas) {
+    function setMousePosition(e) {
+        var ev = e;
+        if (ev.pageX) { //Moz
+            mouse.x = ev.pageX + window.pageXOffset;
+            mouse.y = ev.pageY + window.pageYOffset;
+        } else if (ev.clientX) { //IE
+            mouse.x = ev.clientX + document.body.scrollLeft;
+            mouse.y = ev.clientY + document.body.scrollTop;
+        }
+    };
+
+    var mouse = {
+        x: 0,
+        y: 0,
+        startX: 0,
+        startY: 0
+    };
+    var element = null;
+
+    canvas.onmousemove = function (e) {
+        setMousePosition(e);
+        if (element !== null) {
+            element.style.width = Math.abs(mouse.x - mouse.startX) + 'px';
+            element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
+            element.style.left = (mouse.x - mouse.startX < 0) ? mouse.x + 'px' : mouse.startX + 'px';
+            element.style.top = (mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px';
+        }
+    }
+
+    canvas.onclick = function (e) {
+        if (element !== null) {
+            element = null;
+            canvas.style.cursor = "default";
+            console.log("finish drawing");
+        } else {
+            console.log("begin drawing");
+            mouse.startX = mouse.x;
+            mouse.startY = mouse.y;
+            element = document.createElement('div');
+            element.className = 'rectangle';
+            element.style.left = mouse.x + 'px';
+            element.style.top = mouse.y + 'px';
+            canvas.appendChild(element);
+            canvas.style.cursor = "crosshair";
+        }
+    }
+}
+
 function getWidth() {
-  return Math.max(
+  return Math.min(
     document.body.scrollWidth,
     document.documentElement.scrollWidth,
     document.body.offsetWidth,
@@ -72,7 +118,7 @@ function getWidth() {
 }
 
 function getHeight() {
-  return Math.max(
+  return Math.min(
     document.body.scrollHeight,
     document.documentElement.scrollHeight,
     document.body.offsetHeight,
