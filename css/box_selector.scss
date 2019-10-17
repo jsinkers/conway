@@ -18,11 +18,16 @@ canvas {
     margin: auto;
     text-align: center;
     position: relative;
-    & > * {
+
+    & > div {
+        position: absolute;
+    }
+    & > canvas {
         position: absolute;
         top: 0;
         left: 0;
     }
+
 }
 
 .rectangle {

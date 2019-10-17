@@ -34,27 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     var ctx = canvas.getContext('2d');
     //var imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 
-    //var drawing = false;
-    //var customBase = document.createElement('custom');
-    //var custom = d3.select(customBase); // This is your SVG replacement and the parent of all other elements
-
-    /*var svg = d3.select('#container')
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height);*/
     var x = 0;
     var y = 0;
 
     initDraw(document.getElementById('container'));
-
-    /*canvas.addEventListener('click', function(event) {
-        // x, y coordinates relative to canvas
-        x = event.pageX - canvas.offsetLeft;
-        y = event.pageY - canvas.offsetTop;
-
-        drawing = true;
-        //ctx.strokeRect(x, y, 0, 0);
-    });*/
 
 });
 
@@ -68,7 +51,7 @@ function initDraw(canvas) {
             mouse.x = ev.clientX + document.body.scrollLeft;
             mouse.y = ev.clientY + document.body.scrollTop;
         }
-    };
+    }
 
     var mouse = {
         x: 0,
@@ -86,14 +69,22 @@ function initDraw(canvas) {
             element.style.left = (mouse.x - mouse.startX < 0) ? mouse.x + 'px' : mouse.startX + 'px';
             element.style.top = (mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px';
         }
-    }
+    };
 
     canvas.onclick = function (e) {
         if (element !== null) {
             element = null;
             canvas.style.cursor = "default";
             console.log("finish drawing");
+            boxDrawn();
         } else {
+            //disable render button
+            document.getElementById("btnRender").disabled = true;
+            // delete existing box if there is one
+            var rect = document.querySelector(".rectangle");
+            if (rect) {
+                rect.remove();
+            }
             console.log("begin drawing");
             mouse.startX = mouse.x;
             mouse.startY = mouse.y;
@@ -105,6 +96,15 @@ function initDraw(canvas) {
             canvas.style.cursor = "crosshair";
         }
     }
+}
+
+function boxDrawn() {
+    // enable render button
+    document.getElementById("btnRender").disabled = false;
+
+    // determine (x,y)|(min, max) for the box
+
+
 }
 
 function getWidth() {
