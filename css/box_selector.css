@@ -1,0 +1,30 @@
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+canvas {
+  border: 1px solid #000000;
+}
+
+#container {
+  margin: auto;
+  text-align: center;
+  position: relative;
+}
+.rectangle {
+  border: 2px solid #000000;
+  position: absolute;
+}
+
+#btnRender {
+  clear: both;
+}
+
+/*# sourceMappingURL=box_selector.css.map */

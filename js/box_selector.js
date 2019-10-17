@@ -10,12 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     var dx = max_x - min_x;
     var dy = max_y - min_y;
     var viewportWidth = getWidth();
+    console.log(viewportWidth);
     var viewportHeight = getHeight();
+    console.log(viewportHeight);
     var width = 0;
     var height = 0;
     var ratio = 0.8;
 
-    if (viewportHeight >= viewportWidth) {
+    if (viewportHeight*dy <= viewportWidth*dx) {
         width = Math.round(ratio * viewportWidth);
         height = Math.round(width * dy / dx);
     } else {
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .append('canvas')
         .attr('width', width)
         .attr('height', height)
+        .attr('id', 'canvas')
         .node();
 
     var canvasWidth = canvas.width;
@@ -37,11 +40,102 @@ document.addEventListener('DOMContentLoaded', () => {
     var x = 0;
     var y = 0;
 
-    initDraw(document.getElementById('container'));
+    //initDraw(document.getElementById('canvas'));
+
+    function getWidth() {
+      return Math.min(
+        document.body.scrollWidth,
+        document.documentElement.scrollWidth,
+        document.body.offsetWidth,
+        document.documentElement.offsetWidth,
+        document.documentElement.clientWidth
+      );
+    }
+
+    function getHeight() {
+      return Math.min(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.documentElement.clientHeight
+      );
+    }
+    document.getElementById("btnClear").addEventListener("click", () => {
+        //disable render button
+        document.getElementById("btnRender").disabled = true;
+        document.getElementById("btnClear").disabled = true;
+        // delete existing box if there is one
+        var rect = document.querySelector(".rectangle");
+        if (rect) {
+            rect.remove();
+        }
+    });
+
+
+
+    var mouse = {
+        x: 0,
+        y: 0,
+        startX: 0,
+        startY: 0
+    };
+
+    var element = null;
+
+    //const canvas = document.querySelector('#canvas');
+    canvas.addEventListener('mousedown', function(e) {
+        getCursorPosition(canvas, e);
+        if (element !== null) {
+            element = null;
+            canvas.style.cursor = "default";
+            console.log("finish drawing");
+            boxDrawn();
+        } else {
+            //disable render button
+            document.getElementById("btnRender").disabled = true;
+            document.getElementById("btnClear").disabled = true;
+            // delete existing box if there is one
+            var rect = document.querySelector(".rectangle");
+            if (rect) {
+                rect.remove();
+            }
+            console.log("begin drawing");
+            //mouse.x = mouse.x - document.getElementById('canvas').offsetLeft;
+            mouse.startX = mouse.x + canvas.offsetLeft;
+            mouse.startY = mouse.y;
+            console.log(`x${mouse.x}, y${mouse.y}`);
+            element = document.createElement('div');
+            element.className = 'rectangle';
+            element.style.left = `${mouse.startX}px`;
+            element.style.top = `${mouse.startY}px`;
+            document.getElementById("container").appendChild(element);
+            canvas.style.cursor = "crosshair";
+
+        }
+    });
+
+    canvas.addEventListener("mousemove", (ev) => {
+        getCursorPosition(canvas, ev);
+        if (element !== null) {
+            element.style.width = Math.abs(mouse.x + canvas.offsetLeft - mouse.startX) + 'px';
+            element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
+            element.style.left = (mouse.x - mouse.startX + canvas.offsetLeft < 0) ? mouse.x + canvas.offsetLeft + 'px' : mouse.startX + 'px';
+            element.style.top = (mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px';
+        }
+    });
+
+    function getCursorPosition(canvas, event) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = event.clientX - rect.left;
+        mouse.y = event.clientY - rect.top;
+        console.log("x: " + mouse.x + " y: " + mouse.y);
+    }
+
 
 });
 
-function initDraw(canvas) {
+/*function initDraw(canvas) {
     function setMousePosition(e) {
         var ev = e;
         if (ev.pageX) { //Moz
@@ -80,50 +174,39 @@ function initDraw(canvas) {
         } else {
             //disable render button
             document.getElementById("btnRender").disabled = true;
+            document.getElementById("btnClear").disabled = true;
             // delete existing box if there is one
             var rect = document.querySelector(".rectangle");
             if (rect) {
                 rect.remove();
             }
             console.log("begin drawing");
+            mouse.x = mouse.x - document.getElementById('canvas').offsetLeft;
             mouse.startX = mouse.x;
             mouse.startY = mouse.y;
+            console.log(`x${mouse.x}, y${mouse.y}`);
             element = document.createElement('div');
             element.className = 'rectangle';
-            element.style.left = mouse.x + 'px';
+            element.style.left = `${mouse.x}px}`;
             element.style.top = mouse.y + 'px';
-            canvas.appendChild(element);
+            document.getElementById("container").appendChild(element);
             canvas.style.cursor = "crosshair";
         }
     }
-}
+}*/
+
+
+
 
 function boxDrawn() {
     // enable render button
     document.getElementById("btnRender").disabled = false;
+    document.getElementById("btnClear").disabled = false;
 
     // determine (x,y)|(min, max) for the box
 
 
 }
 
-function getWidth() {
-  return Math.min(
-    document.body.scrollWidth,
-    document.documentElement.scrollWidth,
-    document.body.offsetWidth,
-    document.documentElement.offsetWidth,
-    document.documentElement.clientWidth
-  );
-}
 
-function getHeight() {
-  return Math.min(
-    document.body.scrollHeight,
-    document.documentElement.scrollHeight,
-    document.body.offsetHeight,
-    document.documentElement.offsetHeight,
-    document.documentElement.clientHeight
-  );
-}
 

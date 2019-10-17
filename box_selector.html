@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Box selector</title>
     <link href="css/box_selector.css" type="text/css" rel="stylesheet">
     <link href="css/bootstrap.css" type="text/css" rel="stylesheet">
@@ -9,14 +10,16 @@
     <script src="js/box_selector.js"></script>
 </head>
 <body>
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col" id="container"></div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-primary align-self-center" id="btnRender" disabled>Render</button>
+    <div class="jumbotron d-flex align-items-center min-vh-100">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col col-sm-12"><div id="container"></div></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col col-sm-12" style="text-align: center;">
+                    <button class="btn btn-primary" id="btnRender" disabled>Render</button>
+                    <button class="btn btn-primary" id="btnClear" disabled>Clear</button>
+                </div>
             </div>
         </div>
     </div>

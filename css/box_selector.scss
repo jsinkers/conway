@@ -20,16 +20,25 @@ canvas {
     position: relative;
 
     & > div {
-        position: absolute;
+        //position: absolute;
+        //top: 0;
+        //left: 0;
     }
     & > canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
+        //position: absolute;
+        //top: 0;
+        //left: 0;
+
     }
 
 }
 
 .rectangle {
     border: 2px solid #000000;
+    position: absolute;
+}
+
+#btnRender {
+    //positon: relative;
+    clear: both;
 }
