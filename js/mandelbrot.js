@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var buf = new ArrayBuffer(imageData.data.length);
     var buf8 = new Uint8ClampedArray(buf);
-    var data = new Uint32Array(buf);
+    //var data = new Uint32Array(buf);
+    var data = buf8;
     var progressBar = document.getElementById("progressBar");
     //var lastDraw = (new Date).valueOf();
 
@@ -76,10 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
             progressBar.style.width = `${event.data.completion}%`;
             if (event.data.data) {
                 data = imageData.data;
-                data = event.data.data;
+                //data = event.data.data;
+                data = Object.assign(data, event.data.data);
                 w.terminate();
                 w = undefined;
-                imageData.data.set(buf8);
+                //imageData.data.set(buf8);
                 ctx.putImageData(imageData, 0, 0);
             }
         };

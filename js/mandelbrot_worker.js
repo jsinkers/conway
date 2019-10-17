@@ -87,11 +87,19 @@ function computeMandelbrot() {
                 console.log(escapeIteration);
                 console.log(color);
             }
-            data[y * canvasWidth + x] =
-                (Math.round(255*color[0])) |     // red
-                (Math.round(255*color[1] << 8)) |    // green
-                (Math.round(color[2] << 16)) |    // blue
-                (255 << 24);        // alpha
+            //data[y * canvasWidth + x] =
+            //    (Math.round(255*color[0])) |     // red
+            //    (Math.round(255*color[1] << 8)) |    // green
+            //    (Math.round(255*color[2] << 16)) |    // blue
+            //    (255 << 24);        // alpha
+            for (let i = 0; i < 4; ++i) {
+                let ind = (y * canvasWidth + x) * 4 + i;
+                if (i < 3) {
+                    data[ind] = Math.round(255 * color[i]);
+                } else {
+                    data[ind] = 255;
+                }
+            }
         }
         completion = Math.round((y+1)/canvasHeight*100);
         postMessage({"completion": completion, "data": null});
