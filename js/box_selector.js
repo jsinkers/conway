@@ -22,11 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     var element = null;
 
-
-    if (viewportHeight*dy <= viewportWidth*dx) {
-        width = Math.round(ratio * viewportWidth);
-        height = Math.round(width * dy / dx);
-    } else {
+    width = Math.round(ratio * viewportWidth);
+    height = Math.round(width * dy / dx);
+    if (height > viewportHeight * ratio) {
         height = Math.round(ratio * viewportHeight);
         width = Math.round(height * dx / dy);
     }
