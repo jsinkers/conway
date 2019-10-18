@@ -105,10 +105,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (lockAspectRatio) {
                 // define box size by x position
                 // AR = height/width
-                element.style.width = Math.abs(mouse.x + canvas.offsetLeft - mouse.startX) + 'px';
-                element.style.height = parseFloat(element.style.width.slice(0,-2)) * aspectRatio + 'px';
-                element.style.left = (mouse.x - mouse.startX + canvas.offsetLeft < 0) ? mouse.x + canvas.offsetLeft + 'px' : mouse.startX + 'px';
-                element.style.top = (mouse.y - mouse.startY < 0) ? mouse.startY - parseFloat(element.style.height.slice(0,-2)) + 'px' : mouse.startY + 'px';
+                let w = Math.abs(mouse.x + canvas.offsetLeft - mouse.startX);
+                let h = w * aspectRatio;
+                let l = (mouse.x - mouse.startX + canvas.offsetLeft < 0) ? mouse.x + canvas.offsetLeft : mouse.startX;
+                let t = (mouse.y - mouse.startY < 0) ? mouse.startY - h : mouse.startY;
+                // enforce canvas boundaries
+                if (t+h > canvas.offsetTop + canvas.height) {
+                    h = canvas.offsetTop + canvas.height - t;
+                    w = h / aspectRatio;
+                } else if (t < canvas.offsetTop) {
+                    h = mouse.startY - canvas.offsetTop;
+                    t = canvas.offsetTop;
+                    w = h / aspectRatio;
+                }
+                element.style.width = w + 'px';
+                element.style.height = h + 'px';
+                element.style.left = l + 'px';
+                element.style.top = t + 'px';
             } else {
                 element.style.width = Math.abs(mouse.x + canvas.offsetLeft - mouse.startX) + 'px';
                 element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
