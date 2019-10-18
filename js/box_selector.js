@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startY: 0
     };
     var element = null;
+    var lockAspectRatio = false;
 
     width = Math.round(ratio * viewportWidth);
     height = Math.round(width * dy / dx);
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         height = Math.round(ratio * viewportHeight);
         width = Math.round(height * dx / dy);
     }
-
+    var aspectRatio = height/parseFloat(width);
     var canvas = d3.select('#container')
         .append('canvas')
         .attr('width', width)
@@ -101,10 +102,19 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.addEventListener("mousemove", (ev) => {
         getCursorPosition(canvas, ev);
         if (element !== null) {
-            element.style.width = Math.abs(mouse.x + canvas.offsetLeft - mouse.startX) + 'px';
-            element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
-            element.style.left = (mouse.x - mouse.startX + canvas.offsetLeft < 0) ? mouse.x + canvas.offsetLeft + 'px' : mouse.startX + 'px';
-            element.style.top = (mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px';
+            if (lockAspectRatio) {
+                // define box size by x position
+                // AR = height/width
+                element.style.width = Math.abs(mouse.x + canvas.offsetLeft - mouse.startX) + 'px';
+                element.style.height = parseFloat(element.style.width.slice(0,-2)) * aspectRatio + 'px';
+                element.style.left = (mouse.x - mouse.startX + canvas.offsetLeft < 0) ? mouse.x + canvas.offsetLeft + 'px' : mouse.startX + 'px';
+                element.style.top = (mouse.y - mouse.startY < 0) ? mouse.startY - parseFloat(element.style.height.slice(0,-2)) + 'px' : mouse.startY + 'px';
+            } else {
+                element.style.width = Math.abs(mouse.x + canvas.offsetLeft - mouse.startX) + 'px';
+                element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
+                element.style.left = (mouse.x - mouse.startX + canvas.offsetLeft < 0) ? mouse.x + canvas.offsetLeft + 'px' : mouse.startX + 'px';
+                element.style.top = (mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px';
+            }
         }
     });
 
@@ -115,6 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
         //console.log("x: " + mouse.x + " y: " + mouse.y);
     }
 
+    document.getElementById("chkAspect").addEventListener("change", function() {
+       lockAspectRatio = !!this.checked;
+    });
 });
 
 function boxDrawn() {
