@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         width = Math.round(height * dx / dy);
     }
     var aspectRatio = height/parseFloat(width);
+    var btnRender = document.getElementById("btnRender");
     var canvas = d3.select('#container')
         .append('canvas')
         .attr('width', width)
@@ -75,28 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var progressBar = document.getElementById("progressBar");
     //var lastDraw = (new Date).valueOf();
 
-    if (typeof(Worker) !== "undefined") {
-        var w = new Worker("js/mandelbrot_worker.js");
-        w.postMessage({"width": width, "height": height,
-                        "min_x": min_x, "max_x": max_x,
-                        "min_y": min_y, "max_y": max_y,
-                        "data": data
-                    });
-        w.onmessage = function(event) {
-            progressBar.style.width = `${event.data.completion}%`;
-            if (event.data.data) {
-                data = imageData.data;
-                //data = event.data.data;
-                data = Object.assign(data, event.data.data);
-                w.terminate();
-                w = undefined;
-                //imageData.data.set(buf8);
-                ctx.putImageData(imageData, 0, 0);
-            }
-        };
-    } else {
-        alert("Sorry! No Web Worker support.");
-    }
+    renderMandelbrot();
 
     function shouldReDraw(){
             var dNow = (new Date).valueOf();
@@ -109,8 +89,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
     }
 
+    function renderMandelbrot() {
+        if (typeof (Worker) !== "undefined") {
+            var w = new Worker("js/mandelbrot_worker.js");
+            var message = {
+                "width": width, "height": height,
+                "min_x": min_x, "max_x": max_x,
+                "min_y": min_y, "max_y": max_y,
+                "data": data
+            };
+            w.postMessage(message);
+            w.onmessage = function (event) {
+                progressBar.style.width = `${event.data.completion}%`;
+                if (event.data.data) {
+                    data = imageData.data;
+                    //data = event.data.data;
+                    data = Object.assign(data, event.data.data);
+                    w.terminate();
+                    w = undefined;
+                    //imageData.data.set(buf8);
+                    ctx.putImageData(imageData, 0, 0);
+                }
+            };
+        } else {
+            alert("Sorry! No Web Worker support.");
+        }
+    }
+
     document.getElementById("btnClear").addEventListener("click", () => {
-        //disable render button
+        deleteBox();
+    });
+
+    function deleteBox() {
+        //disable render, clear buttons
         document.getElementById("btnRender").disabled = true;
         document.getElementById("btnClear").disabled = true;
         // delete existing box if there is one
@@ -118,9 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rect) {
             rect.remove();
         }
-    });
+    }
 
-     canvas.addEventListener('mousedown', function(e) {
+    canvas.addEventListener('mousedown', function(e) {
         getCursorPosition(canvas, e);
         if (element !== null) {
             element = null;
@@ -128,18 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("finish drawing");
             boxDrawn();
         } else {
-            //disable render button
-            document.getElementById("btnRender").disabled = true;
-            document.getElementById("btnClear").disabled = true;
-            // delete existing box if there is one
-            var rect = document.querySelector(".rectangle");
-            if (rect) {
-                rect.remove();
-            }
+            deleteBox();
             console.log("begin drawing");
             //mouse.x = mouse.x - document.getElementById('canvas').offsetLeft;
             mouse.startX = mouse.x + canvas.offsetLeft;
-            mouse.startY = mouse.y;
+            mouse.startY = mouse.y + canvas.offsetTop;
             console.log(`x${mouse.x}, y${mouse.y}`);
             element = document.createElement('div');
             element.className = 'rectangle';
@@ -170,10 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     t = canvas.offsetTop;
                     w = h / aspectRatio;
                 }
-                element.style.width = w + 'px';
-                element.style.height = h + 'px';
-                element.style.left = l + 'px';
-                element.style.top = t + 'px';
+                element.style.width = `${w}px`;
+                element.style.height = `${h}px`;
+                element.style.left = `${l}px`;
+                element.style.top = `${t}px`;
             } else {
                 element.style.width = Math.abs(mouse.x + canvas.offsetLeft - mouse.startX) + 'px';
                 element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
@@ -190,14 +194,52 @@ document.addEventListener('DOMContentLoaded', () => {
         //console.log("x: " + mouse.x + " y: " + mouse.y);
     }
 
+
+    document.getElementById("btnRender").addEventListener("click", function() {
+        var el = document.querySelector(".rectangle");
+        if (el) {
+            // get box coordinates relative to canvas
+            var x1 = unPixel(el.style.left) - canvas.offsetLeft;
+            var x2 = x1 + unPixel(el.style.width);
+            var y1 = unPixel(el.style.top) - canvas.offsetTop;
+            var y2 = y1 + unPixel(el.style.height);
+
+            // validate box
+            if ((x2 - x1 <= 0) || (y2 - y1 <= 0)) {
+                deleteBox();
+                alert("Invalid box drawn");
+                return ;
+            }
+            deleteBox();
+
+            // transform into complex coordinates
+            var xScale = d3.scaleLinear()
+                .domain([0.0, canvasWidth])
+                .range([min_x, max_x]);
+
+            var yScale = d3.scaleLinear()
+                .domain([canvasHeight, 0.0])
+                .range([min_y, max_y]);
+
+            min_x = xScale(x1);
+            max_x = xScale(x2);
+            min_y = yScale(y2);
+            max_y = yScale(y1);
+
+            // run worker and re-render
+            renderMandelbrot();
+        }
+    });
 });
+
+function unPixel(x) {
+    return parseFloat(x.slice(0,-2));
+}
 
 function boxDrawn() {
     // enable render button
     document.getElementById("btnRender").disabled = false;
     document.getElementById("btnClear").disabled = false;
-
-    // determine (x,y)|(min, max) for the box
-
 }
+
 
