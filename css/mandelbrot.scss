@@ -1,3 +1,4 @@
+@import "../node_modules/bootstrap-scss/bootstrap";
 
 html {
     height: 100%;
@@ -19,6 +20,7 @@ canvas {
 #container {
     margin: auto;
     text-align: center;
+    position: relative;
 }
 
 #loader {
@@ -34,4 +36,16 @@ canvas {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.rectangle {
+    border: 2px solid #000000;
+    position: absolute;
+}
+
+#inpGroup, #inpGroup2 {
+    @extend .p-2;
+    & > * {
+        text-align: center;
+    }
 }
