@@ -16,6 +16,11 @@ const M = m1 + m2;
 const l1 = 0.3 + Math.random();
 const l2 = 0.2 + Math.random();
 const h = 0.001;
+const refresh_rate = 120;
+const refresh_period = 1/refresh_rate;
+const update_iterations = Math.round(refresh_period/h);
+var centreX, centreY;
+const numPoints = 500;
 
 // initial conditions
 var vector = { theta1: 0,
@@ -30,32 +35,6 @@ var lengthScale = null;
 var points = [];
 var lines = [];
 
-// todo: add trace of pendulum
-function calculateAngAcceleration(vector) {
-    // calculate the angular acceleration for the given iteration
-    const theta1 = vector.theta1;
-    const theta2 = vector.theta2;
-    const dtheta = theta1 - theta2;
-    const alpha1 = vector.alpha1;
-    const alpha2 = vector.alpha2;
-    var gamma1 = ((m2*g*Math.sin(theta2) - m2*l1*Math.pow(alpha1, 2)*Math.sin(dtheta))*Math.cos(dtheta) - m2*l2*Math.pow(alpha2, 2)*Math.sin(dtheta) - g*M*Math.sin(theta1))/(M*l1 - m2*l1*Math.pow(Math.cos(dtheta), 2));
-    var gamma2 = (m2*l1*Math.pow(alpha1, 2)*Math.sin(dtheta) - m2*l1*gamma1*Math.cos(dtheta) - m2*g*Math.sin(theta2))/(m2*l2);
-    vector.gamma1 = gamma1;
-    vector.gamma2 = gamma2;
-    return vector;
-}
-
-function calculateNextIteration(lastVector) {
-    // use Euler's method to compute next iteration of the double pendulum
-    const theta1 = lastVector.theta1 + h * lastVector.alpha1;
-    const theta2 = lastVector.theta2 + h * lastVector.alpha2;
-    const alpha1 = lastVector.alpha1 + h * lastVector.gamma1;
-    const alpha2 = lastVector.alpha2 + h * lastVector.gamma2;
-    var nextVector = {theta1: theta1, theta2: theta2, alpha1: alpha1, alpha2: alpha2};
-    nextVector = calculateAngAcceleration(nextVector);
-    return nextVector;
-}
-
 function drawPendulum() {
     // draw pendulum for given masses, lengths
     // get dims of div
@@ -69,8 +48,8 @@ function drawPendulum() {
         .attr("height", divHeight);
 
     // find centre
-    const centreX = divWidth/2;
-    const centreY = divHeight/2;
+    centreX = divWidth/2;
+    centreY = divHeight/2;
 
     // proportion of svg to use
     const svgProp = 0.8;
@@ -122,27 +101,6 @@ function drawPendulum() {
     var pendulum1 = d3.selectAll("[pendulum='1']");
     var pendulum2 = d3.selectAll("[pendulum='2']");
 
-    /*var interpol1 = d3.interpolateString(`rotate(0, ${centreX}, ${centreY})`, `rotate(30, ${centreX}, ${centreY})`);
-    var interpol2 = d3.interpolateString(`rotate(0, ${centreX}, ${y1})`, `rotate(30, ${centreX}, ${y1})`);
-
-    // rotate lines
-    var rotation1 = pendulum1
-        .transition()
-            .duration(2000)
-            //.attr("transform", `rotate(30, ${centreX}, ${y1})`);
-        .attrTween("transform", function (d,i,a) {return interpol1});
-
-    var rotation2 = pendulum2
-        .transition()
-            .duration(2000)
-            //.attr("transform", `rotate(30, ${centreX}, ${y1})`);
-        .attrTween("transform", function (d,i,a) {return interpol2});*/
-    vector = calculateAngAcceleration(vector);
-
-    setInterval(function() {
-        vector = calculateNextIteration(vector);
-        updatePendulum(vector, centreX, centreY);
-    }, 0.1);
 
 }
 
@@ -190,7 +148,7 @@ function updatePendulum(vector, centreX, centreY) {
                             .moveToBack();
 
     points.push(point);
-    while (points.length > 1000) {
+    while (points.length > numPoints) {
         points[0].remove();
         points.shift();
     }
@@ -203,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () =>  {
     dwgDiv = document.getElementById("drawing");
     svg =  d3.select(dwgDiv).append("svg");
     drawPendulum();
+    computePendulum();
 });
 
 d3.selection.prototype.moveToBack = function() {
@@ -213,3 +172,31 @@ d3.selection.prototype.moveToBack = function() {
         }
     });
 };
+
+function computePendulum() {
+    if (typeof (Worker) !== "undefined") {
+        var w = new Worker("js/double_pendulum_worker.js");
+        var message = {
+            type: "initialise",
+            g: g, M: M,
+            m1: m1, m2: m2,
+            l1: l1, l2: l2,
+            h: h, update_iterations: update_iterations,
+            vector: vector
+        };
+        w.postMessage(message);
+        message = {type: "calculate"};
+
+        w.onmessage = function (e) {
+            console.log("received msg from worker");
+            vector = e.data.vector;
+            setTimeout(function () {
+                console.log("sending message to worker");
+                updatePendulum(vector, centreX, centreY);
+                w.postMessage(message);
+            }, refresh_period*1000);
+        };
+    } else {
+        alert("Sorry! No Web Worker support.");
+    }
+}
