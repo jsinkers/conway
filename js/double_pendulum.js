@@ -18,7 +18,11 @@ const l2 = 0.2 + Math.random();
 const h = 0.001;
 
 // initial conditions
-var vector = { theta1: 0, theta2: 0, alpha1: 5 + 10*Math.random(), alpha2: 5 + 10*Math.random() };
+var vector = { theta1: 0,
+               theta2: 0,
+               alpha1: -3 + 10*Math.random(),
+               alpha2: -3 + 10*Math.random()
+              };
 var dwgDiv = null;
 var svg =  null;
 
