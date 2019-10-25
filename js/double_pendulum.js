@@ -21,6 +21,17 @@ const refresh_period = 1/refresh_rate;
 const update_iterations = Math.round(refresh_period/h);
 var centreX, centreY;
 const numPoints = 500;
+var baseFreq1;
+var baseFreq2;
+
+if (m1 >= m2) {
+    baseFreq1 = 440;
+    baseFreq2 = baseFreq1 / m2 * m1;
+} else {
+    baseFreq2 = 440;
+    baseFreq1 = baseFreq2 / m1 * m2;
+}
+
 
 // initial conditions
 var vector = { theta1: 0,
@@ -158,10 +169,40 @@ function updatePendulum(vector, centreX, centreY) {
 }
 
 document.addEventListener('DOMContentLoaded', () =>  {
+    document.querySelector("#volume").addEventListener("click", () => {
+        if (sound_active) {
+            osc1.stop();
+            osc2.stop();
+            sound_active = false;
+            document.querySelector("#unmute").hidden = true;
+            document.querySelector("#mute").hidden = false;
+        } else {
+            sound_active = true;
+            context = new AudioContext();
+            osc1 = context.createOscillator();
+            gain1 = context.createGain();
+            osc1.type = "sine";
+            osc1.connect(gain1);
+            gain1.connect(context.destination);
+            osc1.frequency.value = baseFreq1;
+            osc1.start();
+            osc2 = context.createOscillator();
+            gain2 = context.createGain();
+            osc2.type = "sine";
+            osc2.connect(gain1);
+            gain2.connect(context.destination);
+            osc2.frequency.value = baseFreq2;
+            osc2.start();
+            document.querySelector("#unmute").hidden = false;
+            document.querySelector("#mute").hidden = true;
+        }
+    });
+
     dwgDiv = document.getElementById("drawing");
     svg =  d3.select(dwgDiv).append("svg");
     drawPendulum();
     computePendulum();
+
 });
 
 d3.selection.prototype.moveToBack = function() {
@@ -193,6 +234,7 @@ function computePendulum() {
             setTimeout(function () {
                 console.log("sending message to worker");
                 updatePendulum(vector, centreX, centreY);
+                updateSound(vector);
                 w.postMessage(message);
             }, refresh_period*1000);
         };
@@ -200,3 +242,20 @@ function computePendulum() {
         alert("Sorry! No Web Worker support.");
     }
 }
+
+var sound_active = false;
+var context;
+var osc1;
+var gain1;
+
+
+
+function updateSound() {
+    if (sound_active) {
+        gain1.gain.setValueAtTime(Math.abs(vector.alpha1)/10, context.currentTime);
+        gain2.gain.setValueAtTime(Math.abs(vector.alpha2)/10, context.currentTime);
+        osc1.frequency.setValueAtTime((vector.alpha1/50 + 1)*baseFreq1, context.currentTime);
+        osc1.frequency.setValueAtTime((vector.alpha2/50 + 1)*baseFreq2, context.currentTime);
+    }
+}
+
