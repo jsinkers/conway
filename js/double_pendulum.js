@@ -20,7 +20,7 @@ var h = 0.001;
 var refresh_rate = 120;
 var sound_refresh_rate = 120;
 var centreX, centreY;
-const numPoints = 500;
+var numPoints = 500;
 var baseFreq1;
 var baseFreq2;
 
@@ -52,8 +52,9 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
     console.log('Mobile - reduced performance');
     mobile = true;
     h = 0.001;
-    refresh_rate = 120;
+    refresh_rate = 80;
     sound_refresh_rate = 30;
+    num_points = 300;
 }
 
 const soundDelay = 1/sound_refresh_rate*1000;
