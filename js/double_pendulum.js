@@ -15,12 +15,10 @@ const m2 = 0.1 + Math.random();
 const M = m1 + m2;
 const l1 = 0.3 + Math.random();
 const l2 = 0.2 + Math.random();
-const h = 0.001;
-const refresh_rate = 60;
-const sound_refresh_rate = 30;
-const soundDelay = 1/sound_refresh_rate*1000;
-const refresh_period = 1/refresh_rate;
-const update_iterations = Math.round(refresh_period/h);
+var h = 0.001;
+
+var refresh_rate = 120;
+var sound_refresh_rate = 120;
 var centreX, centreY;
 const numPoints = 500;
 var baseFreq1;
@@ -47,6 +45,19 @@ var svg =  null;
 var lengthScale = null;
 var points = [];
 var lines = [];
+
+// test if we are on a mobile device
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    // if so let's reduce workload
+    console.log('Mobile - reduced performance');
+    h = 0.01;
+    refresh_rate = 30;
+    sound_refresh_rate = 30;
+}
+
+const soundDelay = 1/sound_refresh_rate*1000;
+const refresh_period = 1/refresh_rate;
+const update_iterations = Math.round(refresh_period/h);
 
 function drawPendulum() {
     // draw pendulum for given masses, lengths
@@ -231,10 +242,10 @@ function computePendulum() {
         message = {type: "calculate"};
 
         w.onmessage = function (e) {
-            console.log("received msg from worker");
+            //console.log("received msg from worker");
             vector = e.data.vector;
             setTimeout(function () {
-                console.log("sending message to worker");
+                //console.log("sending message to worker");
                 updatePendulum(vector, centreX, centreY);
                 updateSound(vector);
                 w.postMessage(message);

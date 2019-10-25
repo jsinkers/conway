@@ -29,7 +29,7 @@ var g, m1, m2, M, l1, l2, h, vector, update_iterations;
 
 onmessage = e => {
     if (e.data.type === "initialise") {
-        console.log("initialising worker");
+        //console.log("initialising worker");
         g = e.data.g;
         m1 = e.data.m1;
         m2 = e.data.m2;
@@ -42,14 +42,14 @@ onmessage = e => {
         vector = calculateAngAcceleration(vector);
         postMessage({vector: vector});
     } else if (e.data.type === "calculate") {
-        console.log("calculating pendulum");
+        //console.log("calculating pendulum");
         let start_time = Date.now();
         for (let i=0; i < update_iterations; i++) {
             vector = calculateNextIteration(vector);
         }
 
         let calc_time = Date.now() - start_time;
-        console.log(`Calc time: ${calc_time}ms`)
+        //console.log(`Calc time: ${calc_time}ms`)
         postMessage({"vector": vector})
     }
 };
