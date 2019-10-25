@@ -17,6 +17,8 @@ const l1 = 0.3 + Math.random();
 const l2 = 0.2 + Math.random();
 const h = 0.001;
 const refresh_rate = 120;
+const sound_refresh_rate = 40;
+const soundDelay = 1/sound_refresh_rate*1000;
 const refresh_period = 1/refresh_rate;
 const update_iterations = Math.round(refresh_period/h);
 var centreX, centreY;
@@ -247,15 +249,17 @@ var sound_active = false;
 var context;
 var osc1;
 var gain1;
-
+var last_time = Date.now();
 
 
 function updateSound() {
-    if (sound_active) {
+    if (sound_active && (Date.now()-last_time) > soundDelay) {
         gain1.gain.setValueAtTime(Math.abs(vector.alpha1)/10, context.currentTime);
         gain2.gain.setValueAtTime(Math.abs(vector.alpha2)/10, context.currentTime);
         osc1.frequency.setValueAtTime((vector.alpha1/50 + 1)*baseFreq1, context.currentTime);
         osc1.frequency.setValueAtTime((vector.alpha2/50 + 1)*baseFreq2, context.currentTime);
+        last_time = Date.now()
     }
+
 }
 
