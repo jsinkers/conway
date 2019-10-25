@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () =>  {
             document.querySelector("#mute").hidden = false;
         } else {
             sound_active = true;
-            context = new AudioContext();
+            context = new (window.AudioContext || window.webkitAudioContext)();
             osc1 = context.createOscillator();
             gain1 = context.createGain();
             osc1.type = "sine";
