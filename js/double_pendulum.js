@@ -50,6 +50,7 @@ var lines = [];
 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     // if so let's reduce workload
     console.log('Mobile - reduced performance');
+    document.getElementById("mobile").innerText = "Mobile";
     h = 0.01;
     refresh_rate = 30;
     sound_refresh_rate = 30;
