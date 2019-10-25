@@ -52,7 +52,7 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
     console.log('Mobile - reduced performance');
     mobile = true;
     h = 0.001;
-    refresh_rate = 30;
+    refresh_rate = 60;
     sound_refresh_rate = 30;
 }
 
