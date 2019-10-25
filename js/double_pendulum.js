@@ -45,13 +45,13 @@ var svg =  null;
 var lengthScale = null;
 var points = [];
 var lines = [];
-
+var mobile = false;
 // test if we are on a mobile device
 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     // if so let's reduce workload
     console.log('Mobile - reduced performance');
-    document.getElementById("mobile").innerText = "Mobile";
-    h = 0.01;
+    mobile = true;
+    h = 0.001;
     refresh_rate = 30;
     sound_refresh_rate = 30;
 }
@@ -183,6 +183,10 @@ function updatePendulum(vector, centreX, centreY) {
 }
 
 document.addEventListener('DOMContentLoaded', () =>  {
+    if (mobile) {
+        document.querySelector("#mobile").innerText = "Mobile";
+    }
+
     document.querySelector("#volume").addEventListener("click", () => {
         if (sound_active) {
             osc1.stop();
