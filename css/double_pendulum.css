@@ -7094,11 +7094,11 @@ button.bg-dark:focus {
   width: 50% !important;
 }
 
-.w-75, #doublePendulum {
+.w-75 {
   width: 75% !important;
 }
 
-.w-100 {
+.w-100, #doublePendulum {
   width: 100% !important;
 }
 
