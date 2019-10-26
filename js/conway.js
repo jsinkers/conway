@@ -22,6 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const numRows = Math.floor(screen_proportion * divHeight / height);
     const svgWidth = numCols * width;
     const svgHeight = numRows * height;
+    var mobile = false;
+
+    // test if we are on a mobile device
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        // if so let's reduce workload
+        console.log('Mobile');
+        mobile = true;
+    }
 
     var griddata = gridData();
     var grid = d3.select("#grid")
@@ -31,7 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         //.attr("width", svgWidth)
         //.attr("height", svgHeight);
 
-
+    if (mobile) {
+        d3.select("svg")
+            .attr("width", svgWidth);
+    }
 
     var row = grid.selectAll(".row")
         .data(griddata)
