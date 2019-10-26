@@ -118,11 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
     var griddata = gridData();
-
     var grid = d3.select("#grid")
         .append("svg")
-        .attr("width", svgWidth)
-        .attr("height", svgHeight);
+        .attr("viewBox", `${0}, ${0}, ${svgWidth}, ${svgHeight}`)
+        .attr("max-height", svgHeight);
+        //.attr("width", svgWidth)
+        //.attr("height", svgHeight);
 
     var row = grid.selectAll(".row")
         .data(griddata)
@@ -155,23 +156,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById("form").onsubmit = function(ev) {
         ev.preventDefault();
-        //if (ev.key === "Enter") {
-            const el = document.getElementById("inpDelay");
-            const x = el.value;
-            // validate input
-            if (isNaN(x) || x < minDelay || x > maxDelay) {
-                alert(`Input error: delay must be a number between ${minDelay}ms and ${maxDelay}ms`);
-            } else {
-                // if valid set a new value for delay
-                delayInMilliseconds = x;
-                // restart interval with new delay value
-                if (running) {
-                    intervalManager(false);
-                    intervalManager(true);
-                }
+        const el = document.getElementById("inpDelay");
+        const x = el.value;
+        // validate input
+        if (isNaN(x) || x < minDelay || x > maxDelay) {
+            alert(`Input error: delay must be a number between ${minDelay}ms and ${maxDelay}ms`);
+        } else {
+            // if valid set a new value for delay
+            delayInMilliseconds = x;
+            // restart interval with new delay value
+            if (running) {
+                intervalManager(false);
+                intervalManager(true);
             }
-            el.value = "";
-        //}
+        }
+        el.value = "";
     };
 
     function intervalManager(flag) {
@@ -210,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return data;
     }
-
 });
 
 
