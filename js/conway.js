@@ -1,12 +1,11 @@
 // TODO: add generation counter
 // TODO: add mouse click to initialise cells
-// TODO: mobile responsive
 document.addEventListener('DOMContentLoaded', () => {
     var grid_container = document.querySelector('.grid_container');
     grid_container.style.setProperty("height",`${window.innerHeight}px`);
 
     var screen_proportion = 1;
-    var dead_style = "#fff";//"#343a40"; //"#6c757d";
+    var dead_style = "#fff";//"#343a40"; //"#6c757d";"#d3d3d3";
     var live_style = "#2C2AF1";
     var running = true;
     const divWidth = document.querySelector('.content').offsetWidth;
@@ -23,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const svgWidth = numCols * width;
     const svgHeight = numRows * height;
     var mobile = false;
+    var slider = document.querySelector("#sliderDelay");
 
     // test if we are on a mobile device
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -209,6 +209,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         el.value = "";
+    });
+
+    slider.addEventListener("input", function() {
+        delayInMilliseconds = this.value;
+        //document.getElementById("sliderVal").innerText = `${delayInMilliseconds}ms`;
+        // restart interval with new delay value
+        if (running) {
+            intervalManager(false);
+            intervalManager(true);
+        }
     });
 });
 
