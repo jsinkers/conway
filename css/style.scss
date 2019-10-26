@@ -3,7 +3,6 @@
 $headerHeight: 0vh;
 $footerHeight: 10vh;
 
-
 html {
     height: 100%;
     width: 100%;
@@ -53,7 +52,7 @@ body {
 
 .content {
     grid-area: 2 / 1 / -2 / -1;
-    //border: 1px solid #000000;
+    border: 1px solid #000000;
     //padding: 2px;
     align-items: center;
 }
@@ -71,40 +70,3 @@ svg {
     height: 100%;
     //width: 100%;
 }
-
-/*#grid {
-    @extend .row;
-    @extend .flex-column;
-    @extend .flex-shrink-1;
-    @extend .flex-md-grow-1;*/
-    /*@extend .h-75;
-    @extend .d-flex;
-    @extend .justify-content-center;
-    @extend .align-self-stretch;
-    /*@extend .w-75;
-    @extend .m-4;
-    /*margin: 0 auto;*/
-    /*align-self: center;*/
-    /*height: 90vh;*/
-    /*width: 90vw;*/
-    /*max-width: 80%;
-    max-height: 80%;*/
-    /*width: 50%;
-    height: 50%;*/
-/*}
-
-#control {*/
-    /*align-self: flex-end;*/
-    /*@extend .row;
-    @extend .align-self-end;
-    /*@extend .h-25;
-    @extend .form-inline;
-    @extend .d-flex;
-    @extend .justify-content-center;
-    @extend .w-100;
-    @extend .p-4;
-    /*justify-content: center;*/
-    /*width: 100%;*/
-    /*text-align: center;*/
-    /*padding: 2%;
-}*/

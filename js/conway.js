@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const minDelay = 100;
     const maxDelay = 5000;
 
+    const numCols = 100;
+    const width = screen_proportion * divWidth / numCols;
+    //const marginX = divWidth - numCols * width;
+    const height = width;
+    const numRows = Math.floor(screen_proportion * divHeight / height);
+    //const marginY = divHeight - numCols * height;
+    const svgWidth = numCols * width;
+    const svgHeight = numRows * height;
+
     function seedCell() {
         if (Math.random() < 0.5) {
             return live_style;
@@ -78,15 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return neighbours;
     }
 
-    const numCols = 100;
-    const width = screen_proportion * divWidth / numCols;
-    const marginX = divWidth - numCols * width;
-    const height = width;
-    const numRows = Math.floor(screen_proportion * divHeight / height);
-    const marginY = divHeight - numCols * height;
-    const svgWidth = numCols * width;
-    const svgHeight = numRows * height;
-
     function gridData() {
 
         //const numRows = Math.floor(screen_proportion * window.innerHeight / height);
@@ -95,10 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
         var xpos = 0; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
         var ypos = 0;
 
-        var g = document.getElementById("grid");
-        g.style.setProperty("marginLeft", marginX/2);
-        g.style.setProperty("marginTop", marginY/2);
-        var click = 0;
+        //var g = document.getElementById("grid");
+        //g.style.setProperty("marginLeft", marginX/2);
+        //g.style.setProperty("marginTop", marginY/2);
+        //var click = 0;
         for (var row = 0; row < numRows; row++) {
             data.push( new Array() );
             for (var column = 0; column < numCols; column++) {
@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
     var griddata = gridData();
     var grid = d3.select("#grid")
         .append("svg")
-        .attr("viewBox", `${0}, ${0}, ${svgWidth}, ${svgHeight}`)
-        .attr("max-height", svgHeight);
+        .attr("viewBox", `${0}, ${0}, ${svgWidth}, ${svgHeight}`);
+        //.attr("max-height", svgHeight);
         //.attr("width", svgWidth)
         //.attr("height", svgHeight);
 
@@ -184,10 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.getElementById("btnReset").onclick = function() {
-        //intervalManager(false);
         griddata = seedGrid();
-        //setTimeout(function () {}, 1000);
-        //intervalManager(true);
     };
 
     function seedGrid() {
