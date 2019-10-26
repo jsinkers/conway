@@ -1,17 +1,14 @@
 // TODO: add generation counter
-// TODO: center grid
 // TODO: add mouse click to initialise cells
-// add reset button
-// TODO: redraw grid when size of window changes
 // TODO: mobile responsive
-
 document.addEventListener('DOMContentLoaded', () => {
+    var grid_container = document.querySelector('.grid_container');
+    grid_container.style.setProperty("height",`${window.innerHeight}px`);
+
     var screen_proportion = 1;
     var dead_style = "#fff";//"#343a40"; //"#6c757d";
     var live_style = "#2C2AF1";
     var running = true;
-    //const divWidth = +d3.select('#grid').style('width').slice(0, -2);
-    //const divHeight = +d3.select('#grid').style('height').slice(0, -2);
     const divWidth = document.querySelector('.content').offsetWidth;
     const divHeight = document.querySelector('.content').offsetHeight;
     var delayInMilliseconds = 500;
@@ -21,13 +18,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const numCols = 100;
     const width = screen_proportion * divWidth / numCols;
-    //const marginX = divWidth - numCols * width;
     const height = width;
     const numRows = Math.floor(screen_proportion * divHeight / height);
-    //const marginY = divHeight - numCols * height;
     const svgWidth = numCols * width;
     const svgHeight = numRows * height;
 
+    var griddata = gridData();
+    var grid = d3.select("#grid")
+        .append("svg")
+        .attr("viewBox", `${0}, ${0}, ${svgWidth}, ${svgHeight}`);
+        //.attr("max-height", svgHeight);
+        //.attr("width", svgWidth)
+        //.attr("height", svgHeight);
+
+
+
+    var row = grid.selectAll(".row")
+        .data(griddata)
+        .enter().append("g")
+        .attr("class", "row");
+
+    var column = row.selectAll(".square")
+        .data(function(d) { return d; })
+        .enter().append("rect")
+        .attr("class","square")
+        .attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; })
+        .attr("width", function(d) { return d.width; })
+        .attr("height", function(d) { return d.height; })
+        .attr("state", function(d) { return d.state;})
+        .style("fill", function(d) { return d.state; })
+        .style("stroke", "#222");
+
+    intervalManager(true);
+
+    // Functions
     function seedCell() {
         if (Math.random() < 0.5) {
             return live_style;
@@ -38,9 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function nextGeneration(griddata, grid) {
         // return updated griddata
-        var data = new Array();
-        for (var row = 0; row < griddata.length; row++) {
-            data.push( new Array() );
+        var data = [];
+        for (let row = 0; row < griddata.length; row++) {
+            data.push( [] );
             for (var col = 0; col < griddata[0].length; col++) {
                 data[row].push({state: nextCellState(row, col, griddata)});
             }
@@ -73,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function countNeighbours(cell_row, cell_col, griddata) {
         // returns a count of the number of live neighbour cells in grid data to the cell at (cell_row, cell_col)
         var neighbours = 0;
-        for (var row = cell_row - 1; row <= cell_row + 1; row++) {
-            for (var col = cell_col - 1; col <= cell_col + 1; col++) {
+        for (let row = cell_row - 1; row <= cell_row + 1; row++) {
+            for (let col = cell_col - 1; col <= cell_col + 1; col++) {
                 if (row >= 0 && row < griddata.length &&
                     col >= 0 && col < griddata[0].length &&
                     !(row === cell_row && col === cell_col)) {
@@ -88,20 +113,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function gridData() {
-
-        //const numRows = Math.floor(screen_proportion * window.innerHeight / height);
-        //const width = screen_proportion * window.innerWidth / numCols;
-        var data = new Array();
+        var data = [];
         var xpos = 0; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
         var ypos = 0;
 
-        //var g = document.getElementById("grid");
-        //g.style.setProperty("marginLeft", marginX/2);
-        //g.style.setProperty("marginTop", marginY/2);
-        //var click = 0;
-        for (var row = 0; row < numRows; row++) {
-            data.push( new Array() );
-            for (var column = 0; column < numCols; column++) {
+        for (let row = 0; row < numRows; row++) {
+            data.push( [] );
+            for (let column = 0; column < numCols; column++) {
                 data[row].push({
                     x: xpos,
                     y: ypos,
@@ -117,34 +135,39 @@ document.addEventListener('DOMContentLoaded', () => {
         return data;
 
     }
-    var griddata = gridData();
-    var grid = d3.select("#grid")
-        .append("svg")
-        .attr("viewBox", `${0}, ${0}, ${svgWidth}, ${svgHeight}`);
-        //.attr("max-height", svgHeight);
-        //.attr("width", svgWidth)
-        //.attr("height", svgHeight);
 
-    var row = grid.selectAll(".row")
-        .data(griddata)
-        .enter().append("g")
-        .attr("class", "row");
+    function seedGrid() {
+        var data = [];
+        for (let row = 0; row < griddata.length; row++) {
+            data.push( [] );
+            for (let col = 0; col < griddata[0].length; col++) {
+                data[row].push({state: seedCell()});
+            }
+        }
 
-    var column = row.selectAll(".square")
-        .data(function(d) { return d; })
-        .enter().append("rect")
-        .attr("class","square")
-        .attr("x", function(d) { return d.x; })
-        .attr("y", function(d) { return d.y; })
-        .attr("width", function(d) { return d.width; })
-        .attr("height", function(d) { return d.height; })
-        .attr("state", function(d) { return d.state;})
-        .style("fill", function(d) { return d.state; })
-        .style("stroke", "#222");
+        var rows = grid.selectAll(".row")
+            .data(data);
 
-    intervalManager(true);
+        var column = rows.selectAll(".square")
+            .data(function(d) { return d; })
+            .attr("state", function(d) { return d.state; })
+            .style("fill", function(d) { return d.state; });
 
-    document.getElementById("btnPause").onclick = function() {
+        return data;
+    }
+
+    function intervalManager(flag) {
+        if (flag) {
+            intervalID = setInterval(function () {
+                griddata = nextGeneration(griddata, d3.select("#grid"));
+            }, delayInMilliseconds);
+        } else {
+            clearInterval(intervalID);
+        }
+    }
+
+    // Callbacks
+    document.getElementById("btnPause").addEventListener("click", function() {
         if (running) {
             this.innerText = "Start";
         } else {
@@ -152,9 +175,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         running = !running;
         intervalManager(running);
-    };
+    });
 
-    document.getElementById("form").onsubmit = function(ev) {
+    document.getElementById("btnReset").addEventListener("click", function() {
+        griddata = seedGrid();
+    });
+
+    document.getElementById("form").addEventListener("submit",function(ev) {
         ev.preventDefault();
         const el = document.getElementById("inpDelay");
         const x = el.value;
@@ -171,41 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         el.value = "";
-    };
-
-    function intervalManager(flag) {
-        if (flag) {
-            intervalID = setInterval(function () {
-                griddata = nextGeneration(griddata, d3.select("#grid"));
-            }, delayInMilliseconds);
-        } else {
-            clearInterval(intervalID);
-        }
-    }
-
-    document.getElementById("btnReset").onclick = function() {
-        griddata = seedGrid();
-    };
-
-    function seedGrid() {
-        var data = new Array();
-        for (var row = 0; row < griddata.length; row++) {
-            data.push( new Array() );
-            for (var col = 0; col < griddata[0].length; col++) {
-                data[row].push({state: seedCell()});
-            }
-        }
-
-        var rows = grid.selectAll(".row")
-            .data(data);
-
-        var column = rows.selectAll(".square")
-            .data(function(d) { return d; })
-            .attr("state", function(d) { return d.state; })
-            .style("fill", function(d) { return d.state; });
-
-        return data;
-    }
+    });
 });
 
 

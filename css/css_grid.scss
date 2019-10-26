@@ -1,0 +1,66 @@
+$dx: 3.5;
+$dy: 2.0;
+$aspectRatio: $dy/$dx;
+$headerHeight: 10vh;
+$footerHeight: 10vh;
+$canvasWidth: 100vw;
+$canvasHeight: $canvasWidth*$aspectRatio;
+$canvasMaxHeight: (100vh - $headerHeight - $footerHeight);
+//$canvasHeight: min(, 100vw*$aspectRatio);
+//$canvasWidth: $canvasHeight / $aspectRatio;
+
+@media (max-height: calc(#{$canvasHeight} + #{$headerHeight} + #{$footerHeight})) {
+  $canvasHeight: $canvasMaxHeight;
+  $canvasWidth: $canvasHeight / $aspectRatio;
+  .wrapper {
+    display: grid;
+    height: 100vh;
+    width: 100vw;
+    grid-template-columns: auto $canvasWidth auto;
+    grid-template-rows: minmax($headerHeight, auto) $canvasHeight minmax($footerHeight, auto);
+  }
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.wrapper {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-template-columns: auto $canvasWidth auto;
+  grid-template-rows: minmax($headerHeight, auto) $canvasHeight minmax($footerHeight, auto);
+}
+
+.header {
+  grid-area: 1 / 1 / 2 / -1;
+  border: 1px solid #000000;
+}
+
+.nestWrapper {
+  grid-area: 2 / 2 / 3 / 3;
+  //display: grid;
+  height: 100%;
+  width: 100%;
+  //grid-template-columns: auto 100px auto;
+}
+
+.container {
+  grid-area: 2 / 2 / 3 / 3;
+  //--aspect-ratio: $aspectRatio;
+  //padding-top: $aspectRatio*100%;
+  border: 1px solid #000000;
+}
+
+.footer {
+  grid-area: -2 / 1 / -1 / -1;
+  border: 1px solid #000000;
+}

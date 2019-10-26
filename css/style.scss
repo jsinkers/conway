@@ -64,12 +64,13 @@ body {
     align-items: center;
     justify-content: center;
     height: 100%;
+    //width: 100%;
     overflow: auto;
     border: 1px solid #000000;
 }
 
 svg {
     height: 100%;
+    width: 100%;
     border: 1px solid #000000;
-    //width: 100%;
 }

@@ -15,7 +15,7 @@ const m2 = 0.1 + Math.random();
 const M = m1 + m2;
 const l1 = 0.3 + Math.random();
 const l2 = 0.2 + Math.random();
-var h = 0.001;
+var h = 0.0001;
 
 var refresh_rate = 120;
 var sound_refresh_rate = 120;

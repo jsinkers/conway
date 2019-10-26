@@ -1,3 +1,9 @@
+// todo: add compute time
+// todo: update mandelbrot computation algorithm
+// todo: update layout to be more responsive
+// todo: improve box drawing for mobiles
+// todo: add zoom out button and stack to pop off renders
+
 function getWidth() {
   return Math.max(
     document.body.scrollWidth,
@@ -193,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mouse.y = event.clientY - rect.top;
         //console.log("x: " + mouse.x + " y: " + mouse.y);
     }
-
 
     document.getElementById("btnRender").addEventListener("click", function() {
         var el = document.querySelector(".rectangle");
