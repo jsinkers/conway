@@ -9707,7 +9707,6 @@ body {
   grid-area: 2/1/-2/-1;
   border: 1px solid #000000;
   align-items: center;
-  background-color: green;
 }
 
 .grid {
@@ -9716,13 +9715,10 @@ body {
   justify-content: center;
   height: 100%;
   overflow: auto;
-  border: 1px solid #000000;
-  background-color: salmon;
 }
 
 svg {
   height: 100%;
-  border: 1px solid #000000;
 }
 
 /*# sourceMappingURL=style.css.map */
