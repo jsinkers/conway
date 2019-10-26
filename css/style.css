@@ -7343,7 +7343,8 @@ button.bg-dark:focus {
 
 .pr-1,
 .px-1,
-.footer {
+.footer,
+.footer-col-wide {
   padding-right: 0.25rem !important;
 }
 
@@ -7354,7 +7355,8 @@ button.bg-dark:focus {
 
 .pl-1,
 .px-1,
-.footer {
+.footer,
+.footer-col-wide {
   padding-left: 0.25rem !important;
 }
 
