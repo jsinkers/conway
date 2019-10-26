@@ -6,12 +6,14 @@
 // TODO: mobile responsive
 
 document.addEventListener('DOMContentLoaded', () => {
-    var screen_proportion = 0.95;
-    var dead_style = "#fff";
+    var screen_proportion = 1;
+    var dead_style = "#fff";//"#343a40"; //"#6c757d";
     var live_style = "#2C2AF1";
     var running = true;
-    const divWidth = +d3.select('#grid').style('width').slice(0, -2);
-    const divHeight = +d3.select('#grid').style('height').slice(0, -2);
+    //const divWidth = +d3.select('#grid').style('width').slice(0, -2);
+    //const divHeight = +d3.select('#grid').style('height').slice(0, -2);
+    const divWidth = document.querySelector('.content').offsetWidth;
+    const divHeight = document.querySelector('.content').offsetHeight;
     var delayInMilliseconds = 500;
     var intervalID = null;
     const minDelay = 100;
@@ -76,19 +78,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return neighbours;
     }
 
+    const numCols = 100;
+    const width = screen_proportion * divWidth / numCols;
+    const marginX = divWidth - numCols * width;
+    const height = width;
+    const numRows = Math.floor(screen_proportion * divHeight / height);
+    const marginY = divHeight - numCols * height;
+    const svgWidth = numCols * width;
+    const svgHeight = numRows * height;
+
     function gridData() {
 
         //const numRows = Math.floor(screen_proportion * window.innerHeight / height);
         //const width = screen_proportion * window.innerWidth / numCols;
         var data = new Array();
-        var xpos = 1; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
-        var ypos = 1;
+        var xpos = 0; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
+        var ypos = 0;
 
-        const numCols = 100;
-        const width = screen_proportion * divWidth / numCols;
-        const height = width;
-        const numRows = Math.floor(screen_proportion * divHeight / height);
-
+        var g = document.getElementById("grid");
+        g.style.setProperty("marginLeft", marginX/2);
+        g.style.setProperty("marginTop", marginY/2);
         var click = 0;
         for (var row = 0; row < numRows; row++) {
             data.push( new Array() );
@@ -102,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 xpos += width;
             }
-            xpos = 1;
+            xpos = 0;
             ypos += height;
         }
         return data;
@@ -112,8 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var grid = d3.select("#grid")
         .append("svg")
-        .attr("width", divWidth)
-        .attr("height", divHeight);
+        .attr("width", svgWidth)
+        .attr("height", svgHeight);
 
     var row = grid.selectAll(".row")
         .data(griddata)

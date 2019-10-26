@@ -1,5 +1,9 @@
 @import "../node_modules/bootstrap-scss/bootstrap";
 
+$headerHeight: 0vh;
+$footerHeight: 10vh;
+
+
 html {
     height: 100%;
     width: 100%;
@@ -9,32 +13,63 @@ body {
     overflow: hidden;
     height: 100%;
     width: 100%;
+    margin: 0;
+    @extend .bg-secondary;
 }
 
-
-#grid_container {
-    @extend .container-fluid;
-    @extend .vh-100;
-    @extend .d-flex;
-    @extend .flex-column;
-    /*display: flex;*/
-    /*align-items: center;*/
-    /*justify-content: center;*/
-    /*height:100%;*/
-    /*flex-wrap: wrap;*/
-    /*flex-direction: row;*/
+.footer-col {
+    @extend .col-auto;
+    @extend .py-2;
+    text-align: center;
 }
 
-#grid {
+.footer-col-wide {
+    @extend .col-auto;
+    @extend .py-2;
+    text-align: center;
+}
+
+.grid_container {
+    display: grid;
+    height: 100vh;
+    width: 100vw;
+    grid-template-columns: auto;
+    grid-template-rows: $headerHeight 1fr auto;
+}
+
+.header {
+    grid-area: 1 / 1 / 2 / -1;
+    border: 1px solid #000000;
+}
+
+.footer {
+    grid-area: -2 / 1 / -1 / -1;
+    //border: 1px solid #000000;
+}
+
+.content {
+    grid-area: 2 / 1 / -2 / -1;
+    //border: 1px solid #000000;
+    //padding: 2px;
+    align-items: center;
+}
+
+.grid {
+    //display: block;
+    align-items: center;
+    height: 100%;
+}
+
+/*#grid {
     @extend .row;
     @extend .flex-column;
     @extend .flex-shrink-1;
-    @extend .flex-md-grow-1;
-    /*@extend .h-75;*/
+    @extend .flex-md-grow-1;*/
+    /*@extend .h-75;
     @extend .d-flex;
     @extend .justify-content-center;
     @extend .align-self-stretch;
-    /*@extend .w-75;*/
+    /*@extend .w-75;
     @extend .m-4;
     /*margin: 0 auto;*/
     /*align-self: center;*/
@@ -44,13 +79,13 @@ body {
     max-height: 80%;*/
     /*width: 50%;
     height: 50%;*/
-}
+/*}
 
-#control {
+#control {*/
     /*align-self: flex-end;*/
-    @extend .row;
+    /*@extend .row;
     @extend .align-self-end;
-    /*@extend .h-25;*/
+    /*@extend .h-25;
     @extend .form-inline;
     @extend .d-flex;
     @extend .justify-content-center;
@@ -59,5 +94,5 @@ body {
     /*justify-content: center;*/
     /*width: 100%;*/
     /*text-align: center;*/
-    /*padding: 2%;*/
-}
+    /*padding: 2%;
+}*/
