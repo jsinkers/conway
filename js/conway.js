@@ -12,8 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const divHeight = document.querySelector('.content').offsetHeight;
     var delayInMilliseconds = 500;
     var intervalID = null;
-    const minDelay = 100;
+    const minDelay = 50;
     const maxDelay = 5000;
+    const sliderMin = 0;
+    const sliderMax = 100;
 
     const numCols = 100;
     const width = screen_proportion * divWidth / numCols;
@@ -23,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const svgHeight = numRows * height;
     var mobile = false;
     var slider = document.querySelector("#sliderDelay");
+    slider.min = sliderMin;
+    slider.max = sliderMax;
 
     // test if we are on a mobile device
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -61,9 +65,20 @@ document.addEventListener('DOMContentLoaded', () => {
         .style("fill", function(d) { return d.state; })
         .style("stroke", "#222");
 
+    var sliderScale = d3.scaleLog()
+        .base(10)
+        .domain([minDelay, maxDelay])
+        .range([sliderMin, sliderMax]);
+
+    slider.value = sliderScale(delayInMilliseconds);
+
     intervalManager(true);
 
     // Functions
+    //function sliderScale(x) {
+    //    return
+    //}
+
     function seedCell() {
         if (Math.random() < 0.5) {
             return live_style;
@@ -212,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     slider.addEventListener("input", function() {
-        delayInMilliseconds = this.value;
+        delayInMilliseconds = sliderScale.invert(this.value);
         //document.getElementById("sliderVal").innerText = `${delayInMilliseconds}ms`;
         // restart interval with new delay value
         if (running) {
@@ -220,6 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
             intervalManager(true);
         }
     });
+
+
 });
 
 
