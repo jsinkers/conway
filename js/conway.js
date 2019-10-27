@@ -63,7 +63,18 @@ document.addEventListener('DOMContentLoaded', () => {
         .attr("height", function(d) { return d.height; })
         .attr("state", function(d) { return d.state;})
         .style("fill", function(d) { return d.state; })
-        .style("stroke", "#222");
+        .style("stroke", "#222")
+        .on("click", function(d) {
+            if (!running) {
+                if (d.state === live_style) {
+                    d.state = dead_style;
+                    d3.select(this).style("fill", dead_style);
+                } else if (d.state === dead_style) {
+                    d.state = live_style;
+                    d3.select(this).style("fill", live_style);
+                }
+            }
+        });
 
     var sliderScale = d3.scaleLog()
         .base(10)
@@ -74,11 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     intervalManager(true);
 
-    // Functions
-    //function sliderScale(x) {
-    //    return
-    //}
-
     function seedCell() {
         if (Math.random() < 0.5) {
             return live_style;
@@ -87,13 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function nextGeneration(griddata, grid) {
+    function nextGeneration(grid) {
         // return updated griddata
+        var gData = grid.selectAll(".row").data();
         var data = [];
-        for (let row = 0; row < griddata.length; row++) {
+        for (let row = 0; row < gData.length; row++) {
             data.push( [] );
-            for (var col = 0; col < griddata[0].length; col++) {
-                data[row].push({state: nextCellState(row, col, griddata)});
+            for (var col = 0; col < gData[0].length; col++) {
+                data[row].push({state: nextCellState(row, col, gData)});
             }
         }
         var rows = grid.selectAll(".row")
@@ -185,7 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function intervalManager(flag) {
         if (flag) {
             intervalID = setInterval(function () {
-                griddata = nextGeneration(griddata, d3.select("#grid"));
+                //griddata = nextGeneration(d3.select("svg").selectAll(".row").data(), d3.select("#grid"));
+                griddata = nextGeneration(d3.select("#grid"));
             }, delayInMilliseconds);
         } else {
             clearInterval(intervalID);
@@ -236,6 +244,14 @@ document.addEventListener('DOMContentLoaded', () => {
             intervalManager(true);
         }
     });
+
+    document.querySelector("svg").addEventListener("mouseover", function() {
+        if (!running) {
+            this.style.cursor = "crosshair";
+        } else {
+            this.style.cursor = "auto";
+        }
+    })
 
 
 });
