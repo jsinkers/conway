@@ -228,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     slider.addEventListener("input", function() {
         delayInMilliseconds = sliderScale.invert(this.value);
+        console.log(`Delay: ${delayInMilliseconds}ms`);
         //document.getElementById("sliderVal").innerText = `${delayInMilliseconds}ms`;
         // restart interval with new delay value
         if (running) {
