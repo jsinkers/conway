@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.min = sliderMin;
     slider.max = sliderMax;
     var mouseDown = false;
+    var toggleEvent = new Event('toggle');
 
     // test if we are on a mobile device
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -75,7 +76,42 @@ document.addEventListener('DOMContentLoaded', () => {
                     d3.select(this).style("fill", live_style);
                 }
             }
+        })
+        .on("click", function(d) {
+            if (!running) {
+                if (d.state === live_style) {
+                    d.state = dead_style;
+                    d3.select(this).style("fill", dead_style);
+                } else if (d.state === dead_style) {
+                    d.state = live_style;
+                    d3.select(this).style("fill", live_style);
+                }
+            }
+        })
+        .on("toggle", function(d) {
+            console.log("toggling");
+            if (!running && mouseDown) {
+                if (d.state === live_style) {
+                    d.state = dead_style;
+                    d3.select(this).style("fill", dead_style);
+                } else if (d.state === dead_style) {
+                    d.state = live_style;
+                    d3.select(this).style("fill", live_style);
+                }
+            }
         });
+
+    function toggleCell(d) {
+        if (!running && mouseDown) {
+            if (d.state === live_style) {
+                d.state = dead_style;
+                d3.select(this).style("fill", dead_style);
+            } else if (d.state === dead_style) {
+                d.state = live_style;
+                d3.select(this).style("fill", live_style);
+            }
+        }
+    }
 
     var sliderScale = d3.scaleLog()
         .base(10)
@@ -252,7 +288,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             this.style.cursor = "auto";
         }
-    })
+    });
+
+    //document.querySelector("svg").addEventListener("click", function() {
+    //    mouseDown = true;
+    //});
 
     document.querySelector("svg").addEventListener("mousedown", function() {
         mouseDown = true;
@@ -260,6 +300,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector("svg").addEventListener("mouseup", function () {
         mouseDown = false;
+    });
+
+    var lastTarget = null;
+
+    document.querySelector("svg").addEventListener("touchmove", function(event) {
+        var myLocation = event.touches[0];
+        var realTarget = document.elementFromPoint(myLocation.clientX, myLocation.clientY);
+        if (realTarget !== lastTarget) {
+            //console.log(realTarget);
+            //mouseDown = true;
+            realTarget.dispatchEvent(toggleEvent);
+            lastTarget = realTarget;
+        }
+    })
+    // touch compatibility
+    document.querySelector("svg").addEventListener("touchstart", function() {
+        mouseDown = true;
+        console.log("touchstart");
+    });
+
+    document.querySelector("svg").addEventListener("touchend", function() {
+        mouseDown = false;
+        console.log("touchend");
     });
 });
 
