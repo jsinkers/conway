@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var slider = document.querySelector("#sliderDelay");
     slider.min = sliderMin;
     slider.max = sliderMax;
+    var mouseDown = false;
 
     // test if we are on a mobile device
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -64,8 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
         .attr("state", function(d) { return d.state;})
         .style("fill", function(d) { return d.state; })
         .style("stroke", "#222")
-        .on("click", function(d) {
-            if (!running) {
+        .on("mouseover", function(d) {
+            if (!running && mouseDown) {
                 if (d.state === live_style) {
                     d.state = dead_style;
                     d3.select(this).style("fill", dead_style);
@@ -253,7 +254,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
 
+    document.querySelector("svg").addEventListener("mousedown", function() {
+        mouseDown = true;
+    });
 
+    document.querySelector("svg").addEventListener("mouseup", function () {
+        mouseDown = false;
+    });
 });
 
 
