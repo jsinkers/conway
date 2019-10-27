@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var sliderScale = d3.scaleLog()
         .base(10)
         .domain([minDelay, maxDelay])
-        .range([sliderMin, sliderMax]);
+        .range([sliderMax, sliderMin]);
 
     slider.value = sliderScale(delayInMilliseconds);
 
@@ -206,12 +206,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
-    function seedGrid() {
+    function seedGrid(value) {
         var data = [];
         for (let row = 0; row < griddata.length; row++) {
             data.push( [] );
             for (let col = 0; col < griddata[0].length; col++) {
-                data[row].push({state: seedCell()});
+                let seedVal = value ? value : seedCell();
+                data[row].push({state: seedVal});
             }
         }
 
@@ -237,16 +238,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Callbacks
-    document.getElementById("btnPause").addEventListener("click", function() {
-        if (running) {
-            this.innerText = "Start";
-        } else {
-            this.innerText = "Pause";
-        }
+    function toggleRunState() {
         running = !running;
+        if (!running) {
+            document.getElementById("btnPause").innerText = "Start";
+        } else {
+            document.getElementById("btnPause").innerText = "Pause";
+        }
         intervalManager(running);
-    });
+    }
+
+    // Callbacks
+    document.getElementById("btnPause").addEventListener("click", toggleRunState);
 
     document.getElementById("btnReset").addEventListener("click", function() {
         griddata = seedGrid();
@@ -313,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
             realTarget.dispatchEvent(toggleEvent);
             lastTarget = realTarget;
         }
-    })
+    });
     // touch compatibility
     document.querySelector("svg").addEventListener("touchstart", function() {
         mouseDown = true;
@@ -324,6 +327,13 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseDown = false;
         console.log("touchend");
     });
+
+    document.querySelector("#btnClear").addEventListener("click", function() {
+        if (running) {
+            toggleRunState();
+        }
+        seedGrid(dead_style);
+    })
 });
 
 
