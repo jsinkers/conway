@@ -30,6 +30,7 @@ function setup() {
   // create a slider
   slider = createSlider(0, 255, ruleNum);
   slider.mouseReleased(readSlider);
+  slider.touchEnded(readSlider);
   slider.addClass("slider-rule");
   slider.addClass("slider");
 
