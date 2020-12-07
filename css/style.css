@@ -9739,6 +9739,11 @@ svg {
   /* 0.2 seconds transition on hover */
 }
 
+.slider-rule {
+    width: 25%;
+    margin: 0.2rem;
+}
+
 .slider:hover {
   opacity: 1;
   /* Fully shown on mouse-over */

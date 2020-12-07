@@ -9,16 +9,41 @@
 
 //todo: add checkbox
 function setup() {
-  
-  createCanvas(800, 800);
+  // default rule
+  ruleNum = 30;
+
+  let height = windowHeight-100;
+  height = height < 100 ? 100 : height;
+  createCanvas(windowWidth, height);
+  //createCanvas(800, 800);
   frameRate(15);
   strokeWeight(0.7);
+  // display rule
+  ruleLabel = createElement('h2',"");
+  //ruleLabel.style('font-family: Tahoma;')
   //ruleSlider = createSlider(0, 255,255);
   //ruleSlider.position(20,20);
   //ruleSlider.style('width','500px');
-  buttonPlus = createButton('+');
   buttonMinus = createButton('-');
+  buttonPlus = createButton('+');
+
+  // create a slider
+  slider = createSlider(0, 255, ruleNum);
+  slider.mouseReleased(readSlider);
+  slider.addClass("slider-rule");
+  slider.addClass("slider");
+
   buttonRandom = createButton('Randomise');
+  buttonMinus.attribute("type", "button");
+  buttonMinus.addClass("btn");
+  buttonMinus.addClass("btn-dark");
+  buttonPlus.attribute("type", "button");
+  buttonPlus.addClass("btn");
+  buttonPlus.addClass("btn-dark");
+  buttonRandom.attribute("type", "button");
+  buttonRandom.addClass("btn");
+  buttonRandom.addClass("btn-dark");
+
   //buttonMinus.position(10,10);
   //buttonPlus.position(30,10);
   //buttonRandom.position(60,10);
@@ -29,19 +54,8 @@ function setup() {
   buttonMinus.mousePressed(decrementRule);
   buttonPlus.mousePressed(incrementRule);
   buttonRandom.mousePressed(randomise);
-
-  // default rule
-  ruleNum = 30;
-  // display rule
-  ruleLabel = createP("");
-  ruleLabel.style('background-color: #f9f9f9; font-family: Tahoma;')
   
   //ruleLabel.position(150,-5);
-
-  
-  // create a slider
-  slider = createSlider(0, 255, ruleNum);
-  slider.mouseReleased(readSlider);
   updateRuleLabel();
   // grid size
   w = 5;
