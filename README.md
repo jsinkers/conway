@@ -18,6 +18,8 @@ It has the following features:
 ![Mandelbrot Set](docs/mandelbrot.gif)
 4. [Progress bar](progress_bar.html). Bootstrap based progress bar, using a web worker to update progress.  Intended as a template for future work.
 5. [Box selector](box_selector.html). Template to create boxes on a canvas by clicking.
-6. [The 256 Rules](https://jsinkers.github.io/conway/rule.html) is a 1D cellular automata.  Each cell and its two neighbours can be in state 0 or 1, producing
+6. [256 Rules](https://jsinkers.github.io/conway/rule.html) is a 1D cellular automata.  Each cell and its two neighbours can be in state 0 or 1, producing
   8 different possible states.  The next value for each state is determined by taking the rule number (in binary), such that the 
   $n$-th bit corresponds to the next value given current state $n$.  Read more [here](https://plato.stanford.edu/entries/cellular-automata/supplement.html).
+7. [4 Billion Rules](https://jsinkers.github.io/conway/rule-extended.html). This is an extension of 256 rules, which uses 2 neighbours either side of each cell
+  to determine the next cell state.  As there are 5 cells, there are 32 possible states, meaning there are 2^32 ~ 4 billion rules.
